@@ -273,7 +273,43 @@
     });
   };
 
-  // 10. Login Form Micro-Interactions (Password Toggle, Submit Spinner, Error Shake)
+  // 10. Ambient Interactive Background Spotlight (Disabled on touch devices)
+  function initAmbientLoginSpotlight() {
+    const wrapper = document.getElementById('authWrapper');
+    const spotlight = document.getElementById('authAmbientSpotlight');
+    if (!wrapper || !spotlight) return;
+
+    // Only enable mouse spotlight on devices that support hover
+    if (window.matchMedia && !window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      return;
+    }
+
+    let isVisible = false;
+
+    function handleMouseMove(e) {
+      const rect = wrapper.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      wrapper.style.setProperty('--mouse-bg-x', `${x}px`);
+      wrapper.style.setProperty('--mouse-bg-y', `${y}px`);
+
+      if (!isVisible) {
+        spotlight.style.opacity = '1';
+        isVisible = true;
+      }
+    }
+
+    function handleMouseLeave() {
+      spotlight.style.opacity = '0';
+      isVisible = false;
+    }
+
+    wrapper.addEventListener('mousemove', handleMouseMove, { passive: true });
+    wrapper.addEventListener('mouseleave', handleMouseLeave);
+  }
+
+  // 11. Login Form Micro-Interactions (Password Toggle, Submit Spinner, Error Shake)
   function initLoginFormInteractions() {
     const form = document.getElementById('loginForm');
     const card = document.getElementById('loginCard');
@@ -282,20 +318,28 @@
     const toggleIcon = document.getElementById('passwordToggleIcon');
     const submitBtn = document.getElementById('btnLogin');
 
-    // Password Toggle
+    // Password Toggle with Micro-Motion (Rotation / Scale)
     if (toggleBtn && pwdInput) {
       toggleBtn.addEventListener('click', function (e) {
         e.preventDefault();
         const isPassword = pwdInput.getAttribute('type') === 'password';
-        pwdInput.setAttribute('type', isPassword ? 'text' : 'password');
-        toggleBtn.classList.toggle('toggled', isPassword);
 
-        if (toggleIcon) {
-          toggleIcon.setAttribute('data-lucide', isPassword ? 'eye-off' : 'eye');
-          if (window.lucide && typeof window.lucide.createIcons === 'function') {
-            window.lucide.createIcons();
+        // Add micro-motion transition class
+        toggleBtn.classList.add('toggling');
+
+        setTimeout(() => {
+          pwdInput.setAttribute('type', isPassword ? 'text' : 'password');
+          toggleBtn.classList.toggle('toggled', isPassword);
+
+          if (toggleIcon) {
+            toggleIcon.setAttribute('data-lucide', isPassword ? 'eye-off' : 'eye');
+            if (window.lucide && typeof window.lucide.createIcons === 'function') {
+              window.lucide.createIcons();
+            }
           }
-        }
+          toggleBtn.classList.remove('toggling');
+        }, 80);
+
         pwdInput.focus();
       });
     }
@@ -328,7 +372,7 @@
       });
     }
 
-    // Clean up error-shake class after animation ends
+    // Clean up error-shake class after animation ends so it can re-trigger cleanly
     if (card && card.classList.contains('error-shake')) {
       card.addEventListener('animationend', function (e) {
         if (e.animationName === 'errorShake') {
@@ -346,6 +390,7 @@
     initMagneticButtons();
     initRipple();
     initSidebarGlider();
+    initAmbientLoginSpotlight();
     initLoginFormInteractions();
   });
 })();

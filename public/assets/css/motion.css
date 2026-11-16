@@ -356,7 +356,7 @@
 }
 
 /* ==========================================================================
-   10. Minimalist Interactive Login Page (Entrance, Focus Glow, Tactile)
+   10. High-End Interactive Login Experience (Motion Physics & Ambient Grid)
    ========================================================================== */
 
 .auth-body {
@@ -368,17 +368,59 @@
   -webkit-font-smoothing: antialiased;
 }
 
+/* 1. Ambient Interactive Background (Dot-Grid & Mouse Cursor Spotlight) */
 .auth-center-wrapper {
+  position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px 16px;
   box-sizing: border-box;
+  overflow: hidden;
+  background-color: #F6F8F9;
 }
 
-/* 1. Entrance Stagger for Login Card */
+/* Dot grid background pattern */
+.auth-grid-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image: radial-gradient(rgba(34, 32, 33, 0.11) 1.2px, transparent 1.2px);
+  background-size: 24px 24px;
+  background-position: center center;
+  mask-image: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.9) 35%, transparent 85%);
+  -webkit-mask-image: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.9) 35%, transparent 85%);
+}
+
+/* Ambient Cursor Spotlight: follows mouse movement across the background */
+.auth-ambient-spotlight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  will-change: opacity, background;
+  transition: opacity 0.4s ease;
+  background: radial-gradient(
+    650px circle at var(--mouse-bg-x, -999px) var(--mouse-bg-y, -999px),
+    rgba(192, 65, 14, 0.12) 0%,
+    rgba(192, 65, 14, 0.035) 45%,
+    transparent 70%
+  );
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .auth-ambient-spotlight {
+    display: none !important;
+  }
+}
+
+/* 2. Choreographed Staggered Entrance & Login Card */
 .auth-card-clean {
+  position: relative;
+  z-index: 5;
   width: 100%;
   max-width: 410px;
   background: #FFFFFF;
@@ -386,15 +428,52 @@
   border-radius: 16px;
   padding: 34px 28px;
   box-shadow: 0 10px 25px -4px rgba(34, 32, 33, 0.07), 0 4px 10px -2px rgba(34, 32, 33, 0.04);
-  position: relative;
   will-change: transform, opacity;
-  animation: loginCardEntrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: loginCardEntrance 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes loginCardEntrance {
   0% {
     opacity: 0;
-    transform: translateY(15px);
+    transform: translateY(22px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Sequenced child elements entrance */
+.auth-header {
+  text-align: center;
+  margin-bottom: 22px;
+  animation: loginStaggerFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both;
+}
+
+#groupUsername {
+  animation: loginStaggerFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.22s both;
+}
+
+#groupPassword {
+  animation: loginStaggerFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.30s both;
+}
+
+#rowOptions {
+  animation: loginStaggerFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.38s both;
+}
+
+.btn-login-submit {
+  animation: loginStaggerFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.46s both;
+}
+
+#authFooter {
+  animation: loginStaggerFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.54s both;
+}
+
+@keyframes loginStaggerFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
   }
   100% {
     opacity: 1;
@@ -402,17 +481,11 @@
   }
 }
 
-/* Staggering sub-elements entrance */
-.auth-header {
-  text-align: center;
-  margin-bottom: 22px;
-  animation: loginFadeSlide 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
-}
-
+/* Logo Micro-Motion (Drive-In Effect & Suspension Bounce) */
 .auth-brand-badge {
-  width: 46px;
-  height: 46px;
-  border-radius: 12px;
+  width: 48px;
+  height: 48px;
+  border-radius: 13px;
   background: var(--accent);
   color: #FFFFFF;
   display: inline-flex;
@@ -420,11 +493,50 @@
   justify-content: center;
   box-shadow: 0 4px 14px rgba(192, 65, 14, 0.32);
   margin-bottom: 12px;
-  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease;
+  cursor: pointer;
 }
 
-.auth-card-clean:hover .auth-brand-badge {
-  transform: scale(1.04) rotate(-2deg);
+.auth-brand-badge .brand-car-icon {
+  display: block;
+  will-change: transform;
+  animation: carDriveIn 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.2) 0.28s both;
+}
+
+@keyframes carDriveIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-34px) scale(0.68);
+  }
+  75% {
+    transform: translateX(3px) scale(1.06);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.auth-brand-badge:hover {
+  transform: translateY(-3px) rotate(-6deg) scale(1.08);
+  box-shadow: 0 8px 22px rgba(192, 65, 14, 0.42);
+}
+
+.auth-brand-badge:hover .brand-car-icon {
+  animation: carSuspensionBounce 0.45s ease;
+}
+
+@keyframes carSuspensionBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  35% {
+    transform: translateY(-2.5px) scale(1.06);
+  }
+  70% {
+    transform: translateY(1.5px);
+  }
 }
 
 .auth-brand-name {
@@ -451,55 +563,12 @@
   line-height: 1.45;
 }
 
-/* Staggered form elements */
+/* 3. Interactive Form & Input Focus */
 .form-group-animated {
   margin-bottom: 16px;
   text-align: left;
 }
 
-.form-group-animated:nth-of-type(1) {
-  animation: loginFadeSlide 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.10s both;
-}
-
-.form-group-animated:nth-of-type(2) {
-  animation: loginFadeSlide 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both;
-}
-
-.login-options-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 14px 0 20px;
-  font-size: 13px;
-  animation: loginFadeSlide 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.22s both;
-}
-
-.btn-login-submit {
-  animation: loginFadeSlide 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.28s both;
-}
-
-.auth-footer-simple {
-  margin-top: 24px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
-  text-align: center;
-  font-size: 11.5px;
-  color: var(--text-muted);
-  animation: loginFadeSlide 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.34s both;
-}
-
-@keyframes loginFadeSlide {
-  0% {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* 2. Floating Label / Input Focus Glow */
 .floating-label {
   display: block;
   font-size: 12.5px;
@@ -520,13 +589,15 @@
   background: #FFFFFF;
   border: 1.5px solid var(--border);
   border-radius: var(--radius-md);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  transition: border-color 0.22s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), 
+              background-color 0.2s ease;
   box-sizing: border-box;
 }
 
 .input-focus-wrap:focus-within {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3.5px rgba(192, 65, 14, 0.12);
+  box-shadow: 0 0 0 3.5px rgba(192, 65, 14, 0.14);
 }
 
 .input-leading-icon {
@@ -536,12 +607,12 @@
   display: flex;
   align-items: center;
   pointer-events: none;
-  transition: color 0.2s ease, transform 0.2s ease;
+  transition: color 0.22s ease, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .input-focus-wrap:focus-within .input-leading-icon {
   color: var(--accent);
-  transform: scale(1.08);
+  transform: scale(1.1);
 }
 
 .animated-input {
@@ -566,7 +637,7 @@
   font-weight: 400;
 }
 
-/* 3. Interactive Password Toggle */
+/* Interactive Password Toggle with Rotation/Scale */
 .password-toggle-btn {
   position: absolute;
   right: 6px;
@@ -581,50 +652,127 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-sm);
-  transition: color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+  transition: color 0.18s ease, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.18s ease;
 }
 
 .password-toggle-btn:hover {
   color: var(--text-primary);
   background: rgba(0, 0, 0, 0.05);
+  transform: translateY(-50%) scale(1.08);
 }
 
 .password-toggle-btn:active {
-  transform: translateY(-50%) scale(0.90);
+  transform: translateY(-50%) scale(0.92);
+}
+
+.password-toggle-btn .toggle-eye-icon {
+  display: inline-block;
+  transition: transform 0.24s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.password-toggle-btn.toggling .toggle-eye-icon {
+  transform: scale(0.75) rotate(20deg);
 }
 
 .password-toggle-btn.toggled {
   color: var(--accent);
 }
 
-/* 4. Remember Me Checkbox */
-.remember-label {
-  display: inline-flex;
+/* Custom Springy Checkmark (Ingat saya) */
+.login-options-row {
+  display: flex;
   align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  color: var(--text-secondary);
+  justify-content: space-between;
+  margin: 14px 0 20px;
   font-size: 13px;
-  user-select: none;
-  transition: color 0.15s ease;
 }
 
-.remember-label:hover {
+.custom-check-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 13px;
+  color: var(--text-secondary);
+  transition: color 0.18s ease;
+}
+
+.custom-check-wrap:hover {
   color: var(--text-primary);
 }
 
-.custom-checkbox {
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-  accent-color: var(--accent);
-  border-radius: 4px;
+.custom-check-native {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
 }
 
-/* 5. Tactile Submit Button & Spinner */
+.custom-check-box {
+  width: 17px;
+  height: 17px;
+  border-radius: 4px;
+  border: 1.5px solid var(--border);
+  background: #FFFFFF;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.custom-check-wrap:hover .custom-check-box {
+  border-color: #C0410E;
+}
+
+.custom-check-native:focus-visible + .custom-check-box {
+  box-shadow: 0 0 0 3px rgba(192, 65, 14, 0.16);
+  border-color: var(--accent);
+}
+
+.check-icon {
+  width: 11px;
+  height: 11px;
+  display: block;
+}
+
+.check-path {
+  stroke: #FFFFFF;
+  stroke-dasharray: 18;
+  stroke-dashoffset: 18;
+  transition: stroke-dashoffset 0.24s cubic-bezier(0.16, 1, 0.3, 1) 0.04s;
+}
+
+.custom-check-native:checked + .custom-check-box {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  animation: checkmarkPop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.custom-check-native:checked + .custom-check-box .check-path {
+  stroke-dashoffset: 0;
+}
+
+@keyframes checkmarkPop {
+  0% {
+    transform: scale(0.8);
+  }
+  55% {
+    transform: scale(1.22);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 4. Interactive Submit Button (Shimmer, Arrow Shift, Tactile Press, Loading Spinner) */
 .btn-login-submit {
-  width: 100%;
   position: relative;
+  overflow: hidden;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -637,9 +785,34 @@
   border: none;
   border-radius: var(--radius-md);
   cursor: pointer;
-  overflow: hidden;
-  transition: transform 0.16s cubic-bezier(0.2, 0, 0, 1), background-color 0.18s ease, box-shadow 0.18s ease;
+  transition: transform 0.18s cubic-bezier(0.2, 0, 0, 1), 
+              background-color 0.2s ease, 
+              box-shadow 0.2s ease;
   box-shadow: 0 2px 8px rgba(192, 65, 14, 0.28);
+}
+
+/* Shimmer Sweep Animation on Hover */
+.btn-login-submit::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.28) 50%,
+    transparent 70%
+  );
+  transform: translateX(-150%) rotate(25deg);
+  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.btn-login-submit:hover:not(:disabled)::before {
+  transform: translateX(150%) rotate(25deg);
 }
 
 .btn-login-submit:hover:not(:disabled) {
@@ -648,21 +821,31 @@
   box-shadow: 0 6px 18px rgba(192, 65, 14, 0.38);
 }
 
-.btn-login-submit:active:not(:disabled) {
-  transform: scale(0.975);
-  box-shadow: 0 1px 4px rgba(192, 65, 14, 0.2);
-}
-
-.btn-login-submit:disabled {
-  opacity: 0.88;
-  cursor: not-allowed;
-}
-
 .btn-login-submit .btn-content {
+  position: relative;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   gap: 8px;
   transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.btn-login-submit .btn-icon {
+  transition: transform 0.24s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-login-submit:hover:not(:disabled) .btn-icon {
+  transform: translateX(4.5px);
+}
+
+.btn-login-submit:active:not(:disabled) {
+  transform: scale(0.98);
+  box-shadow: 0 1px 4px rgba(192, 65, 14, 0.2);
+}
+
+.btn-login-submit:disabled {
+  opacity: 0.90;
+  cursor: not-allowed;
 }
 
 .btn-login-submit.is-loading .btn-content {
@@ -673,6 +856,7 @@
 
 .btn-login-submit .btn-spinner {
   position: absolute;
+  z-index: 2;
   width: 18px;
   height: 18px;
   border: 2.2px solid rgba(255, 255, 255, 0.35);
@@ -692,7 +876,22 @@
   }
 }
 
-/* 6. Error Shake Animation */
+/* 5. Error Feedback & Alert Transitions */
+.auth-alert-enter {
+  animation: alertSlideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes alertSlideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .error-shake {
   animation: errorShake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both !important;
 }
@@ -708,4 +907,14 @@
     transform: translateX(6px);
   }
 }
+
+.auth-footer-simple {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
 
