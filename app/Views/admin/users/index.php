@@ -1,51 +1,90 @@
-<div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px;">
+<div class="page-header">
     <div>
-        <h1 style="margin:0;font-size:24px;font-weight:800;">Manajemen Akun Pengguna</h1>
-        <p style="margin:4px 0 0;color:#646163;">Kelola hak akses administrator dan petugas operasional.</p>
+        <h1 class="page-title">Kelola Pengguna</h1>
+        <p class="page-desc">Atur akun petugas operasional dan administrator sistem.</p>
     </div>
-    <a href="<?= base_url('admin/users/create') ?>" class="btn btn-accent">
-        <i data-lucide="user-plus" style="width:16px;height:16px;"></i>
-        <span>Tambah User</span>
-    </a>
+    <div class="page-actions">
+        <a href="<?= base_url('admin/users/create') ?>" class="btn btn-primary">
+            <i data-lucide="user-plus" style="width:15px;height:15px;"></i>
+            <span>Tambah Pengguna</span>
+        </a>
+    </div>
 </div>
 
-<div class="ui-card" style="overflow:hidden;">
+<div class="filter-toolbar">
+    <form method="GET" action="<?= base_url('admin/users') ?>" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;width:100%;">
+        <input type="text" name="q" value="<?= e($q ?? '') ?>" class="ui-input" placeholder="Cari nama, username, atau email...">
+        <button type="submit" class="btn btn-dark">Cari</button>
+        <?php if (!empty($q)): ?>
+            <a href="<?= base_url('admin/users') ?>" class="btn btn-outline">Reset</a>
+        <?php endif; ?>
+    </form>
+</div>
+
+<div class="card" style="overflow:hidden;">
     <div class="table-wrap">
         <table class="ui-table">
             <thead>
                 <tr>
-                    <th>Nama</th>
+                    <th>Nama Lengkap</th>
                     <th>Username</th>
-                    <th>Role</th>
+                    <th>Peran (Role)</th>
                     <th>Status</th>
                     <th>Login Terakhir</th>
-                    <th style="text-align:right;">Aksi</th>
+                    <th class="actions">Aksi</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($users as $u): ?>
-                <tr>
-                    <td>
-                        <strong><?= e($u['nama']) ?></strong>
-                        <div style="font-size:12px;color:#646163;"><?= e($u['email'] ?? '-') ?></div>
-                    </td>
-                    <td><code><?= e($u['username']) ?></code></td>
-                    <td style="text-transform:capitalize;font-weight:600;"><?= e($u['role']) ?></td>
-                    <td><span class="badge badge-<?= e($u['status']) ?>"><span class="badge-dot"></span><?= e($u['status']) ?></span></td>
-                    <td style="font-size:12.5px;color:#646163;"><?= e($u['last_login_at'] ?? 'Belum pernah') ?></td>
-                    <td style="text-align:right;white-space:nowrap;">
-                        <a href="<?= base_url('admin/users/' . $u['id'] . '/edit') ?>" class="btn btn-warm btn-sm">Edit</a>
-                        <form action="<?= base_url('admin/users/' . $u['id'] . '/toggle-status') ?>" method="POST" style="display:inline;">
-                            <?= csrf_field() ?>
-                            <button type="submit" class="btn btn-warm btn-sm">Toggle</button>
-                        </form>
-                        <form action="<?= base_url('admin/users/' . $u['id'] . '/delete') ?>" method="POST" style="display:inline;" onsubmit="return confirm('Hapus user ini?')">
-                            <?= csrf_field() ?>
-                            <button type="submit" class="btn btn-danger-soft btn-sm">Hapus</button>
-                        </form>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
+                <?php if (empty($users)): ?>
+                    <tr>
+                        <td colspan="6">
+                            <?php
+                            $icon = 'user-x';
+                            $title = 'Pengguna Tidak Ditemukan';
+                            $message = 'Tidak ada pengguna yang cocok dengan pencarian Anda.';
+                            $actionUrl = base_url('admin/users/create');
+                            $actionLabel = 'Tambah Pengguna Baru';
+                            require BASE_PATH . '/app/Views/partials/empty-state.php';
+                            ?>
+                        </td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach ($users as $u): ?>
+                    <tr>
+                        <td>
+                            <strong style="font-size:13.5px;"><?= e($u['nama']) ?></strong>
+                            <?php if (!empty($u['email'])): ?>
+                                <div style="font-size:11.5px;color:var(--text-muted);"><?= e($u['email']) ?></div>
+                            <?php endif; ?>
+                        </td>
+                        <td><code><?= e($u['username']) ?></code></td>
+                        <td>
+                            <span style="text-transform:capitalize;font-weight:600;">
+                                <?= e($u['role']) ?>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge badge-<?= e($u['status']) ?>">
+                                <span class="badge-dot"></span><?= ($u['status'] === 'active') ? 'Aktif' : 'Nonaktif' ?>
+                            </span>
+                        </td>
+                        <td style="font-size:12px;color:var(--text-secondary);"><?= e($u['last_login_at'] ?? 'Belum pernah') ?></td>
+                        <td class="actions">
+                            <a href="<?= base_url('admin/users/' . $u['id'] . '/edit') ?>" class="btn btn-outline btn-sm">Edit</a>
+                            <form action="<?= base_url('admin/users/' . $u['id'] . '/toggle-status') ?>" method="POST" style="display:inline;">
+                                <?= csrf_field() ?>
+                                <button type="submit" class="btn btn-subtle btn-sm">
+                                    <?= ($u['status'] === 'active') ? 'Nonaktifkan' : 'Aktifkan' ?>
+                                </button>
+                            </form>
+                            <form action="<?= base_url('admin/users/' . $u['id'] . '/delete') ?>" method="POST" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus akun ini?')">
+                                <?= csrf_field() ?>
+                                <button type="submit" class="btn btn-danger-soft btn-sm">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>

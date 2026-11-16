@@ -5,7 +5,6 @@ use App\Models\User;
 use App\Services\ActivityLogger;
 use Auth;
 use Controller;
-use Database;
 use Flash;
 use Request;
 
@@ -16,7 +15,9 @@ class AuthController extends Controller
         if (Auth::check()) {
             redirect('/dashboard');
         }
-        $this->view('auth/login', ['title' => 'Masuk — Rental Armada Bengkulu'], 'layouts/auth');
+        $this->view('auth/login', [
+            'title' => 'Masuk — Rental Armada Bengkulu',
+        ], 'layouts/auth');
     }
 
     public function login(Request $request): void
@@ -34,15 +35,14 @@ class AuthController extends Controller
         }
 
         if (($user['status'] ?? 'active') !== 'active') {
-            Flash::set('error', 'Akun Anda dinonaktifkan. Hubungi Administrator.');
+            Flash::set('error', 'Akun Anda sedang dinonaktifkan. Silakan hubungi administrator.');
             redirect('/login');
         }
 
-        $pdo = Database::connection();
-        $pdo->prepare("UPDATE users SET last_login_at = NOW() WHERE id = :id")->execute(['id' => $user['id']]);
-
+        $userModel->updateLastLogin((int)$user['id']);
         Auth::login($user);
         ActivityLogger::log('LOGIN', 'auth', "Pengguna {$user['nama']} masuk ke sistem.", (int)$user['id']);
+
         Flash::set('success', "Selamat datang kembali, {$user['nama']}!");
         redirect('/dashboard');
     }
@@ -51,9 +51,10 @@ class AuthController extends Controller
     {
         $this->verifyCsrf($request);
         if (Auth::check()) {
-            ActivityLogger::log('LOGOUT', 'auth', 'Pengguna keluar dari aplikasi.');
+            ActivityLogger::log('LOGOUT', 'auth', 'Pengguna keluar dari sistem.');
         }
         Auth::logout();
+        Flash::set('success', 'Anda telah keluar dari aplikasi.');
         redirect('/login');
     }
 }

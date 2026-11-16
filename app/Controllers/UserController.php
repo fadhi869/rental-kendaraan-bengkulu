@@ -1,35 +1,32 @@
 <?php
 namespace App\Controllers;
 
+use App\Models\User;
 use App\Services\ActivityLogger;
 use Auth;
 use Controller;
-use Database;
 use Flash;
 use Request;
 use Validator;
 
 class UserController extends Controller
 {
+    private User $user;
+
+    public function __construct()
+    {
+        $this->user = new User();
+    }
+
     public function index(Request $request): void
     {
         $this->requireAdmin();
-        $pdo = Database::connection();
         $q = trim((string)$request->input('q', ''));
-        $sql = "SELECT * FROM users WHERE deleted_at IS NULL";
-        $params = [];
-        if ($q !== '') {
-            $sql .= " AND (nama LIKE :q1 OR username LIKE :q2 OR email LIKE :q3)";
-            $like = "%{$q}%";
-            $params = ['q1' => $like, 'q2' => $like, 'q3' => $like];
-        }
-        $sql .= " ORDER BY id ASC";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute($params);
+        $users = $this->user->getAll($q);
 
         $this->view('admin/users/index', [
-            'title' => 'Manajemen User — Rental Armada Bengkulu',
-            'users' => $stmt->fetchAll(),
+            'title' => 'Kelola Pengguna — Rental Armada Bengkulu',
+            'users' => $users,
             'q'     => $q,
         ]);
     }
@@ -38,7 +35,7 @@ class UserController extends Controller
     {
         $this->requireAdmin();
         $this->view('admin/users/create', [
-            'title' => 'Tambah Akun Pengguna',
+            'title' => 'Tambah Pengguna — Rental Armada Bengkulu',
         ]);
     }
 
@@ -47,30 +44,27 @@ class UserController extends Controller
         $this->requireAdmin();
         $this->verifyCsrf($request);
         $data = $request->all();
+
         $errors = Validator::validate($data, [
             'nama'     => 'required|max:100',
             'username' => 'required|min:4|max:50',
             'password' => 'required|min:6',
             'role'     => 'required',
         ]);
+
         if ($errors) {
             Flash::set('error', reset($errors));
             redirect('/admin/users/create');
         }
-        $pdo = Database::connection();
-        $stmt = $pdo->prepare("
-            INSERT INTO users (username, password, nama, email, role, status)
-            VALUES (:u, :p, :n, :e, :r, :s)
-        ");
-        $stmt->execute([
-            'u' => trim($data['username']),
-            'p' => password_hash($data['password'], PASSWORD_BCRYPT),
-            'n' => trim($data['nama']),
-            'e' => trim($data['email'] ?? '') ?: null,
-            'r' => ($data['role'] === 'admin') ? 'admin' : 'petugas',
-            's' => ($data['status'] ?? 'active') === 'inactive' ? 'inactive' : 'active',
-        ]);
+
+        if ($this->user->isUsernameTaken($data['username'])) {
+            Flash::set('error', 'Username tersebut sudah digunakan.');
+            redirect('/admin/users/create');
+        }
+
+        $this->user->create($data);
         ActivityLogger::log('TAMBAH_USER', 'user_management', 'Menambahkan pengguna baru: ' . trim($data['nama']));
+
         Flash::set('success', 'Akun pengguna berhasil ditambahkan.');
         redirect('/admin/users');
     }
@@ -78,17 +72,16 @@ class UserController extends Controller
     public function edit(Request $request, string $id): void
     {
         $this->requireAdmin();
-        $pdo = Database::connection();
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE id = :id AND deleted_at IS NULL");
-        $stmt->execute(['id' => (int)$id]);
-        $user = $stmt->fetch();
-        if (!$user) {
-            Flash::set('error', 'User tidak ditemukan.');
+        $item = $this->user->findById((int)$id);
+
+        if (!$item) {
+            Flash::set('error', 'Pengguna tidak ditemukan.');
             redirect('/admin/users');
         }
+
         $this->view('admin/users/edit', [
-            'title' => 'Edit Akun Pengguna',
-            'user'  => $user,
+            'title' => 'Edit Pengguna — ' . $item['nama'],
+            'user'  => $item,
         ]);
     }
 
@@ -96,38 +89,33 @@ class UserController extends Controller
     {
         $this->requireAdmin();
         $this->verifyCsrf($request);
+        $intId = (int)$id;
         $data = $request->all();
-        $pdo = Database::connection();
+
+        $rules = [
+            'nama'     => 'required|max:100',
+            'username' => 'required|min:4|max:50',
+            'role'     => 'required',
+        ];
 
         if (!empty($data['password'])) {
-            $stmt = $pdo->prepare("
-                UPDATE users SET nama = :n, username = :u, email = :e, role = :r, status = :s, password = :p
-                WHERE id = :id
-            ");
-            $stmt->execute([
-                'n'  => trim($data['nama']),
-                'u'  => trim($data['username']),
-                'e'  => trim($data['email'] ?? '') ?: null,
-                'r'  => ($data['role'] === 'admin') ? 'admin' : 'petugas',
-                's'  => ($data['status'] ?? 'active') === 'inactive' ? 'inactive' : 'active',
-                'p'  => password_hash($data['password'], PASSWORD_BCRYPT),
-                'id' => (int)$id,
-            ]);
-        } else {
-            $stmt = $pdo->prepare("
-                UPDATE users SET nama = :n, username = :u, email = :e, role = :r, status = :s
-                WHERE id = :id
-            ");
-            $stmt->execute([
-                'n'  => trim($data['nama']),
-                'u'  => trim($data['username']),
-                'e'  => trim($data['email'] ?? '') ?: null,
-                'r'  => ($data['role'] === 'admin') ? 'admin' : 'petugas',
-                's'  => ($data['status'] ?? 'active') === 'inactive' ? 'inactive' : 'active',
-                'id' => (int)$id,
-            ]);
+            $rules['password'] = 'min:6';
         }
-        ActivityLogger::log('UPDATE_USER', 'user_management', 'Memperbarui akun pengguna ID ' . $id);
+
+        $errors = Validator::validate($data, $rules);
+        if ($errors) {
+            Flash::set('error', reset($errors));
+            redirect("/admin/users/{$id}/edit");
+        }
+
+        if ($this->user->isUsernameTaken($data['username'], $intId)) {
+            Flash::set('error', 'Username tersebut sudah digunakan oleh akun lain.');
+            redirect("/admin/users/{$id}/edit");
+        }
+
+        $this->user->update($intId, $data);
+        ActivityLogger::log('UPDATE_USER', 'user_management', 'Memperbarui data pengguna ' . trim($data['nama']));
+
         Flash::set('success', 'Data pengguna berhasil diperbarui.');
         redirect('/admin/users');
     }
@@ -136,20 +124,18 @@ class UserController extends Controller
     {
         $this->requireAdmin();
         $this->verifyCsrf($request);
-        if ((int)$id === Auth::id()) {
-            Flash::set('error', 'Tidak dapat menonaktifkan akun Anda sendiri.');
+        $intId = (int)$id;
+
+        if ($intId === Auth::id()) {
+            Flash::set('error', 'Anda tidak dapat menonaktifkan akun sendiri.');
             redirect('/admin/users');
         }
-        $pdo = Database::connection();
-        $stmt = $pdo->prepare("SELECT status, username FROM users WHERE id = :id");
-        $stmt->execute(['id' => (int)$id]);
-        $u = $stmt->fetch();
-        if ($u) {
-            $next = $u['status'] === 'active' ? 'inactive' : 'active';
-            $pdo->prepare("UPDATE users SET status = :s WHERE id = :id")->execute(['s' => $next, 'id' => (int)$id]);
-            ActivityLogger::log('STATUS_USER', 'user_management', "Mengubah status {$u['username']} menjadi {$next}");
-            Flash::set('success', 'Status pengguna diperbarui.');
-        }
+
+        $newStatus = $this->user->toggleStatus($intId);
+        $statusLabel = $newStatus === 'active' ? 'diaktifkan' : 'dinonaktifkan';
+
+        ActivityLogger::log('TOGGLE_USER', 'user_management', "Mengubah status user ID {$id} menjadi {$newStatus}.");
+        Flash::set('success', "Status akun berhasil {$statusLabel}.");
         redirect('/admin/users');
     }
 
@@ -157,14 +143,21 @@ class UserController extends Controller
     {
         $this->requireAdmin();
         $this->verifyCsrf($request);
-        if ((int)$id === Auth::id()) {
-            Flash::set('error', 'Tidak dapat menghapus akun yang sedang aktif digunakan.');
+        $intId = (int)$id;
+
+        if ($intId === Auth::id()) {
+            Flash::set('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
             redirect('/admin/users');
         }
-        $pdo = Database::connection();
-        $pdo->prepare("UPDATE users SET deleted_at = NOW(), status = 'inactive' WHERE id = :id")->execute(['id' => (int)$id]);
-        ActivityLogger::log('HAPUS_USER', 'user_management', 'Menghapus akun pengguna ID ' . $id);
-        Flash::set('success', 'Akun pengguna berhasil dihapus.');
+
+        $target = $this->user->findById($intId);
+        try {
+            $this->user->softDelete($intId);
+            ActivityLogger::log('HAPUS_USER', 'user_management', 'Menghapus akun pengguna: ' . ($target['nama'] ?? "ID {$id}"));
+            Flash::set('success', 'Akun pengguna berhasil dihapus.');
+        } catch (\Throwable $e) {
+            Flash::set('error', 'Gagal menghapus akun pengguna.');
+        }
         redirect('/admin/users');
     }
 }

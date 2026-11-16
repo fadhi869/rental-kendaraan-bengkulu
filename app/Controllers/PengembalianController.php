@@ -1,29 +1,28 @@
 <?php
 namespace App\Controllers;
 
+use App\Models\Penyewaan;
 use App\Services\PenyewaanService;
 use Controller;
-use Database;
 use Flash;
 use Request;
 
 class PengembalianController extends Controller
 {
+    private Penyewaan $penyewaan;
+    private PenyewaanService $service;
+
+    public function __construct()
+    {
+        $this->penyewaan = new Penyewaan();
+        $this->service   = new PenyewaanService();
+    }
+
     public function index(Request $request): void
     {
         $this->requireAuth();
-        $pdo = Database::connection();
-        $rows = $pdo->query("
-            SELECT p.*, pl.nama AS nama_pelanggan, pl.no_hp,
-                   k.plat_nomor, k.merek, k.model
-            FROM penyewaan p
-            JOIN pelanggan pl ON pl.id = p.pelanggan_id
-            JOIN kendaraan k ON k.id = p.kendaraan_id
-            WHERE p.status = 'Berjalan'
-            ORDER BY p.tgl_kembali_rencana ASC
-        ")->fetchAll();
-
-        $multiplier = (new PenyewaanService())->getDendaMultiplier();
+        $rows = $this->penyewaan->getReturnsList();
+        $multiplier = $this->service->getDendaMultiplier();
 
         $this->view('pengembalian/index', [
             'title'      => 'Pengembalian Kendaraan — Rental Armada Bengkulu',
@@ -36,11 +35,13 @@ class PengembalianController extends Controller
     {
         $this->requireAuth();
         $this->verifyCsrf($request);
+
         try {
             $tgl = (string)$request->input('tgl_kembali_aktual', date('Y-m-d'));
             $catatan = (string)$request->input('catatan', '');
-            $res = (new PenyewaanService())->prosesPengembalian((int)$id, $tgl, $catatan);
-            $msg = 'Pengembalian unit selesai diproses.';
+            $res = $this->service->prosesPengembalian((int)$id, $tgl, $catatan);
+
+            $msg = 'Pengembalian kendaraan selesai diproses.';
             if ($res['hari_terlambat'] > 0) {
                 $msg .= " Terlambat {$res['hari_terlambat']} hari (Denda: " . rupiah($res['denda']) . ').';
             }
@@ -48,6 +49,7 @@ class PengembalianController extends Controller
         } catch (\Throwable $e) {
             Flash::set('error', $e->getMessage());
         }
+
         redirect('/pengembalian');
     }
 }

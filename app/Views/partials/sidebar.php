@@ -2,94 +2,102 @@
 $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 $user = auth_user();
 $isAdmin = ($user['role'] ?? '') === 'admin';
-$active = fn(string $p): string => str_contains($uri, $p) ? 'active' : '';
+
+// Accurate active detection based on route segments
+$isActive = function(string $route) use ($uri): string {
+    $base = base_url($route);
+    if ($route === 'dashboard') {
+        return (str_ends_with($uri, '/dashboard') || str_ends_with($uri, '/dashboard/')) ? 'active' : '';
+    }
+    return str_contains($uri, '/' . ltrim($route, '/')) ? 'active' : '';
+};
 ?>
 <aside id="appSidebar" class="app-sidebar">
-    <div style="overflow-y:auto;">
-        <a href="<?= base_url('dashboard') ?>" class="brand-box">
-            <div class="brand-icon">
-                <i data-lucide="car-front" style="width:20px;height:20px;"></i>
+    <div class="sidebar-scroll">
+        <a href="<?= base_url('dashboard') ?>" class="brand-header">
+            <div class="brand-badge">
+                <i data-lucide="car" style="width:18px;height:18px;"></i>
             </div>
             <div>
-                <div style="font-weight:700;font-size:15px;color:#FFFFFF;line-height:1.2;">Armada Bengkulu</div>
-                <div style="font-size:11px;color:#9E9B9C;">Fleet Management</div>
+                <div class="brand-title">Armada Bengkulu</div>
+                <div class="brand-subtitle">Rental Kendaraan</div>
             </div>
         </a>
 
-        <div class="nav-section">
-            <div class="nav-label">Menu Utama</div>
-            <a href="<?= base_url('dashboard') ?>" class="nav-link <?= $active('/dashboard') ?>">
-                <i data-lucide="layout-dashboard" style="width:17px;height:17px;"></i>
+        <div class="nav-group">
+            <div class="nav-heading">Menu Utama</div>
+            <a href="<?= base_url('dashboard') ?>" class="nav-item <?= $isActive('dashboard') ?>">
+                <i data-lucide="layout-dashboard" style="width:16px;height:16px;"></i>
                 <span>Dashboard</span>
             </a>
-            <a href="<?= base_url('penyewaan') ?>" class="nav-link <?= $active('/penyewaan') ?>">
-                <i data-lucide="key-round" style="width:17px;height:17px;"></i>
-                <span>Transaksi Sewa</span>
+            <a href="<?= base_url('penyewaan') ?>" class="nav-item <?= $isActive('penyewaan') ?>">
+                <i data-lucide="key" style="width:16px;height:16px;"></i>
+                <span>Penyewaan</span>
             </a>
-            <a href="<?= base_url('pengembalian') ?>" class="nav-link <?= $active('/pengembalian') ?>">
-                <i data-lucide="rotate-ccw" style="width:17px;height:17px;"></i>
+            <a href="<?= base_url('pengembalian') ?>" class="nav-item <?= $isActive('pengembalian') ?>">
+                <i data-lucide="rotate-ccw" style="width:16px;height:16px;"></i>
                 <span>Pengembalian</span>
             </a>
-            <a href="<?= base_url('riwayat') ?>" class="nav-link <?= $active('/riwayat') ?>">
-                <i data-lucide="history" style="width:17px;height:17px;"></i>
+            <a href="<?= base_url('riwayat') ?>" class="nav-item <?= $isActive('riwayat') ?>">
+                <i data-lucide="history" style="width:16px;height:16px;"></i>
                 <span>Riwayat Sewa</span>
             </a>
         </div>
 
-        <div class="nav-section">
-            <div class="nav-label">Master Data</div>
-            <a href="<?= base_url('kendaraan') ?>" class="nav-link <?= $active('/kendaraan') ?>">
-                <i data-lucide="car" style="width:17px;height:17px;"></i>
+        <div class="nav-group">
+            <div class="nav-heading">Data Master</div>
+            <a href="<?= base_url('kendaraan') ?>" class="nav-item <?= $isActive('kendaraan') ?>">
+                <i data-lucide="car-front" style="width:16px;height:16px;"></i>
                 <span>Data Kendaraan</span>
             </a>
-            <a href="<?= base_url('jenis-kendaraan') ?>" class="nav-link <?= $active('/jenis-kendaraan') ?>">
-                <i data-lucide="tags" style="width:17px;height:17px;"></i>
+            <a href="<?= base_url('jenis-kendaraan') ?>" class="nav-item <?= $isActive('jenis-kendaraan') ?>">
+                <i data-lucide="tag" style="width:16px;height:16px;"></i>
                 <span>Jenis Kendaraan</span>
             </a>
-            <a href="<?= base_url('pelanggan') ?>" class="nav-link <?= $active('/pelanggan') ?>">
-                <i data-lucide="users" style="width:17px;height:17px;"></i>
+            <a href="<?= base_url('pelanggan') ?>" class="nav-item <?= $isActive('pelanggan') ?>">
+                <i data-lucide="users" style="width:16px;height:16px;"></i>
                 <span>Data Pelanggan</span>
             </a>
         </div>
 
-        <div class="nav-section">
-            <div class="nav-label">Analitik & Sistem</div>
-            <a href="<?= base_url('laporan') ?>" class="nav-link <?= $active('/laporan') ?>">
-                <i data-lucide="bar-chart-3" style="width:17px;height:17px;"></i>
+        <div class="nav-group">
+            <div class="nav-heading">Laporan & Pengaturan</div>
+            <a href="<?= base_url('laporan') ?>" class="nav-item <?= $isActive('laporan') ?>">
+                <i data-lucide="bar-chart-2" style="width:16px;height:16px;"></i>
                 <span>Laporan Pendapatan</span>
             </a>
             <?php if ($isAdmin): ?>
-            <a href="<?= base_url('admin/users') ?>" class="nav-link <?= $active('/admin/users') ?>">
-                <i data-lucide="shield-check" style="width:17px;height:17px;"></i>
-                <span>Manajemen User</span>
+            <a href="<?= base_url('admin/users') ?>" class="nav-item <?= $isActive('admin/users') ?>">
+                <i data-lucide="shield" style="width:16px;height:16px;"></i>
+                <span>Kelola Pengguna</span>
             </a>
-            <a href="<?= base_url('aktivitas') ?>" class="nav-link <?= $active('/aktivitas') ?>">
-                <i data-lucide="activity" style="width:17px;height:17px;"></i>
-                <span>Log Aktivitas</span>
+            <a href="<?= base_url('aktivitas') ?>" class="nav-item <?= $isActive('aktivitas') ?>">
+                <i data-lucide="activity" style="width:16px;height:16px;"></i>
+                <span>Catatan Aktivitas</span>
             </a>
             <?php endif; ?>
         </div>
     </div>
 
-    <div style="padding:14px;border-top:1px solid rgba(255,255,255,0.08);">
-        <div style="background:#333132;border-radius:12px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
-            <div style="display:flex;align-items:center;gap:10px;min-width:0;">
-                <div style="width:32px;height:32px;border-radius:9px;background:#C0410E;color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+    <div class="sidebar-footer">
+        <div class="user-card">
+            <div style="display:flex;align-items:center;gap:9px;min-width:0;flex:1;">
+                <div class="user-avatar-sm">
                     <?= strtoupper(substr($user['nama'] ?? 'U', 0, 1)) ?>
                 </div>
-                <div style="min-width:0;">
-                    <div style="font-size:12.5px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                        <?= e($user['nama'] ?? 'User') ?>
+                <div class="user-info-text">
+                    <div class="user-name" title="<?= e($user['nama'] ?? 'Pengguna') ?>">
+                        <?= e($user['nama'] ?? 'Pengguna') ?>
                     </div>
-                    <div style="font-size:11px;color:#A19EA0;text-transform:capitalize;">
+                    <div class="user-role-badge">
                         <?= e($user['role'] ?? 'petugas') ?>
                     </div>
                 </div>
             </div>
             <form action="<?= base_url('logout') ?>" method="POST" style="margin:0;">
                 <?= csrf_field() ?>
-                <button type="submit" title="Keluar" style="background:none;border:none;color:#A19EA0;cursor:pointer;padding:6px;border-radius:8px;">
-                    <i data-lucide="log-out" style="width:16px;height:16px;"></i>
+                <button type="submit" class="btn-logout-icon" title="Keluar">
+                    <i data-lucide="log-out" style="width:15px;height:15px;"></i>
                 </button>
             </form>
         </div>

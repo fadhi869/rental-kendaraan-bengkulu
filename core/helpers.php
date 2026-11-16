@@ -1,13 +1,32 @@
 <?php
 function base_url(string $path = ''): string
 {
-    $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
-    $baseDir = rtrim(str_replace('\\', '/', dirname($scriptName)), '/');
-    if ($baseDir === '/' || $baseDir === '.') {
-        $baseDir = '';
+    static $detectedBase = null;
+    if ($detectedBase === null) {
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+        $fullBase = rtrim(str_replace('\\', '/', dirname($scriptName)), '/');
+        if ($fullBase === '/' || $fullBase === '.') {
+            $fullBase = '';
+        }
+        $requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+
+        if ($fullBase !== '' && !str_starts_with($requestUri, $fullBase)) {
+            $parentBase = rtrim(str_replace('\\', '/', dirname($fullBase)), '/');
+            if ($parentBase === '/' || $parentBase === '.') {
+                $parentBase = '';
+            }
+            if ($parentBase !== '' && str_starts_with($requestUri, $parentBase)) {
+                $detectedBase = $parentBase;
+            } else {
+                $detectedBase = $fullBase;
+            }
+        } else {
+            $detectedBase = $fullBase;
+        }
     }
+
     $cleanPath = ltrim($path, '/');
-    return $baseDir . ($cleanPath !== '' ? '/' . $cleanPath : '');
+    return $detectedBase . ($cleanPath !== '' ? '/' . $cleanPath : '');
 }
 
 function e(?string $value): string

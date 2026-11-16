@@ -1,49 +1,67 @@
-<div style="margin-bottom:22px;">
-    <h1 style="margin:0;font-size:24px;font-weight:800;">Pengembalian Unit Armada</h1>
-    <p style="margin:4px 0 0;color:#646163;">Proses serah terima kendaraan kembali. Denda keterlambatan dihitung otomatis sebesar <strong><?= $multiplier ?>x</strong> tarif harian.</p>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Pengembalian Kendaraan</h1>
+        <p class="page-desc">Proses serah terima unit yang kembali. Denda keterlambatan dihitung otomatis (pengali denda: <strong><?= $multiplier ?>x</strong>).</p>
+    </div>
 </div>
 
-<div class="ui-card" style="overflow:hidden;">
+<div class="card" style="overflow:hidden;">
     <div class="table-wrap">
         <table class="ui-table">
             <thead>
                 <tr>
-                    <th>Kode</th>
-                    <th>Pelanggan</th>
-                    <th>Unit Kendaraan</th>
+                    <th>Kode Transaksi</th>
+                    <th>Penyewa</th>
+                    <th>Kendaraan</th>
                     <th>Jatuh Tempo</th>
                     <th>Tarif / Hari</th>
-                    <th>Proses Pengembalian</th>
+                    <th style="min-width:320px;">Proses Pengembalian</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (empty($rows)): ?>
-                    <tr><td colspan="6" style="text-align:center;padding:32px;color:#646163;">Seluruh unit telah dikembalikan. Tidak ada sewa berjalan.</td></tr>
+                    <tr>
+                        <td colspan="6">
+                            <?php
+                            $icon = 'check-circle';
+                            $title = 'Semua Unit Telah Kembali';
+                            $message = 'Saat ini tidak ada kendaraan yang berstatus sedang disewa.';
+                            require BASE_PATH . '/app/Views/partials/empty-state.php';
+                            ?>
+                        </td>
+                    </tr>
                 <?php else: ?>
                     <?php foreach ($rows as $r): ?>
+                    <?php $isOverdue = strtotime(date('Y-m-d')) > strtotime($r['tgl_kembali_rencana']); ?>
                     <tr>
-                        <td><strong><?= e($r['kode_transaksi']) ?></strong></td>
+                        <td>
+                            <a href="<?= base_url('penyewaan/' . $r['id']) ?>" style="font-weight:700;color:var(--accent);">
+                                <?= e($r['kode_transaksi']) ?>
+                            </a>
+                        </td>
                         <td>
                             <div style="font-weight:600;"><?= e($r['nama_pelanggan']) ?></div>
-                            <div style="font-size:12px;color:#646163;"><?= e($r['no_hp']) ?></div>
+                            <div style="font-size:11.5px;color:var(--text-muted);"><?= e($r['no_hp']) ?></div>
                         </td>
                         <td>
                             <div style="font-weight:600;"><?= e($r['merek'] . ' ' . $r['model']) ?></div>
-                            <div style="font-size:12px;color:#646163;"><?= e($r['plat_nomor']) ?></div>
+                            <span class="plate-tag"><?= e($r['plat_nomor']) ?></span>
                         </td>
                         <td>
-                            <strong><?= tgl_indo($r['tgl_kembali_rencana']) ?></strong>
-                            <?php if (strtotime(date('Y-m-d')) > strtotime($r['tgl_kembali_rencana'])): ?>
-                                <div style="font-size:11px;color:#C0410E;font-weight:700;">Lewat Jatuh Tempo</div>
+                            <div style="font-weight:600;"><?= tgl_indo($r['tgl_kembali_rencana']) ?></div>
+                            <?php if ($isOverdue): ?>
+                                <span class="badge badge-berjalan" style="margin-top:3px;font-size:10.5px;">Lewat Jatuh Tempo</span>
                             <?php endif; ?>
                         </td>
                         <td><?= rupiah($r['tarif_saat_sewa']) ?></td>
                         <td>
                             <form action="<?= base_url('pengembalian/' . $r['id'] . '/proses') ?>" method="POST" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
                                 <?= csrf_field() ?>
-                                <input type="date" name="tgl_kembali_aktual" value="<?= date('Y-m-d') ?>" class="ui-input" style="width:150px;padding:7px 10px;">
-                                <input type="text" name="catatan" placeholder="Kondisi unit..." class="ui-input" style="width:170px;padding:7px 10px;">
-                                <button type="submit" class="btn btn-dark btn-sm">Selesaikan</button>
+                                <input type="date" name="tgl_kembali_aktual" value="<?= date('Y-m-d') ?>" class="ui-input" style="width:136px;padding:6px 10px;font-size:12.5px;">
+                                <input type="text" name="catatan" placeholder="Kondisi kendaraan..." class="ui-input" style="width:160px;padding:6px 10px;font-size:12.5px;">
+                                <button type="submit" class="btn btn-dark btn-sm" onclick="return confirm('Proses pengembalian unit ini?')">
+                                    <span>Selesaikan</span>
+                                </button>
                             </form>
                         </td>
                     </tr>

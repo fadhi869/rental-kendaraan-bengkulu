@@ -1,24 +1,22 @@
 <?php $user = auth_user(); ?>
 <header class="app-topbar">
-    <div style="display:flex;align-items:center;gap:12px;">
-        <button id="sidebarToggle" type="button" class="mobile-toggle" aria-label="Menu">
+    <div class="topbar-left">
+        <button id="sidebarToggle" type="button" class="mobile-toggle-btn" aria-label="Buka menu navigasi">
             <i data-lucide="menu" style="width:18px;height:18px;"></i>
         </button>
-        <div>
-            <div style="font-size:12px;color:var(--text-muted);"><?= tgl_indo(date('Y-m-d')) ?></div>
-        </div>
+        <span class="topbar-date"><?= tgl_indo(date('Y-m-d')) ?></span>
     </div>
 
-    <div style="display:flex;align-items:center;gap:12px;">
-        <a href="<?= base_url('penyewaan/create') ?>" class="btn btn-accent btn-sm">
-            <i data-lucide="plus" style="width:15px;height:15px;"></i>
+    <div class="topbar-right">
+        <a href="<?= base_url('penyewaan/create') ?>" class="btn btn-primary btn-sm">
+            <i data-lucide="plus" style="width:14px;height:14px;"></i>
             <span>Sewa Baru</span>
         </a>
-        <div style="display:flex;align-items:center;gap:8px;background:var(--bg-warm);border:1px solid var(--border);padding:5px 12px 5px 6px;border-radius:999px;">
-            <span style="width:26px;height:26px;border-radius:50%;background:var(--dark);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;">
+        <div class="topbar-user-pill">
+            <span class="topbar-user-avatar">
                 <?= strtoupper(substr($user['nama'] ?? 'A', 0, 1)) ?>
             </span>
-            <span style="font-size:12.5px;font-weight:600;color:var(--dark);"><?= e($user['nama'] ?? 'Petugas') ?></span>
+            <span class="topbar-user-name"><?= e($user['nama'] ?? 'Petugas') ?></span>
         </div>
     </div>
 </header>

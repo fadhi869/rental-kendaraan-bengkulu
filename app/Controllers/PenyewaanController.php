@@ -1,40 +1,38 @@
 <?php
 namespace App\Controllers;
 
+use App\Models\Kendaraan;
+use App\Models\Pelanggan;
+use App\Models\Penyewaan;
 use App\Services\PenyewaanService;
 use Controller;
-use Database;
 use Flash;
 use Request;
 
 class PenyewaanController extends Controller
 {
+    private Penyewaan $penyewaan;
+    private Pelanggan $pelanggan;
+    private Kendaraan $kendaraan;
+    private PenyewaanService $service;
+
+    public function __construct()
+    {
+        $this->penyewaan = new Penyewaan();
+        $this->pelanggan = new Pelanggan();
+        $this->kendaraan = new Kendaraan();
+        $this->service   = new PenyewaanService();
+    }
+
     public function index(Request $request): void
     {
         $this->requireAuth();
-        $pdo = Database::connection();
         $status = trim((string)$request->input('status', ''));
-
-        $sql = "
-            SELECT p.*, pl.nama AS nama_pelanggan, pl.no_hp,
-                   k.plat_nomor, k.merek, k.model
-            FROM penyewaan p
-            JOIN pelanggan pl ON pl.id = p.pelanggan_id
-            JOIN kendaraan k ON k.id = p.kendaraan_id
-            WHERE 1=1
-        ";
-        $params = [];
-        if ($status !== '') {
-            $sql .= " AND p.status = :status";
-            $params['status'] = $status;
-        }
-        $sql .= " ORDER BY p.id DESC";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute($params);
+        $rows = $this->penyewaan->getFiltered($status);
 
         $this->view('penyewaan/index', [
             'title'  => 'Transaksi Penyewaan — Rental Armada Bengkulu',
-            'rows'   => $stmt->fetchAll(),
+            'rows'   => $rows,
             'status' => $status,
         ]);
     }
@@ -42,18 +40,11 @@ class PenyewaanController extends Controller
     public function create(Request $request): void
     {
         $this->requireAuth();
-        $pdo = Database::connection();
-        $pelanggan = $pdo->query("SELECT * FROM pelanggan ORDER BY nama ASC")->fetchAll();
-        $kendaraan = $pdo->query("
-            SELECT k.*, jk.nama_jenis
-            FROM kendaraan k
-            JOIN jenis_kendaraan jk ON jk.id = k.jenis_id
-            WHERE k.status = 'Tersedia'
-            ORDER BY k.merek ASC, k.model ASC
-        ")->fetchAll();
+        $pelanggan = $this->pelanggan->getAll();
+        $kendaraan = $this->kendaraan->getAvailable();
 
         $this->view('penyewaan/create', [
-            'title'     => 'Buat Transaksi Sewa Baru',
+            'title'     => 'Buat Sewa Baru — Rental Armada Bengkulu',
             'pelanggan' => $pelanggan,
             'kendaraan' => $kendaraan,
         ]);
@@ -63,10 +54,10 @@ class PenyewaanController extends Controller
     {
         $this->requireAuth();
         $this->verifyCsrf($request);
+
         try {
-            $service = new PenyewaanService();
-            $id = $service->createRental($request->all());
-            Flash::set('success', 'Transaksi penyewaan berhasil dibuat.');
+            $id = $this->service->createRental($request->all());
+            Flash::set('success', 'Transaksi sewa berhasil dibuat.');
             redirect('/penyewaan/' . $id);
         } catch (\Throwable $e) {
             Flash::set('error', $e->getMessage());
@@ -77,26 +68,15 @@ class PenyewaanController extends Controller
     public function show(Request $request, string $id): void
     {
         $this->requireAuth();
-        $pdo = Database::connection();
-        $stmt = $pdo->prepare("
-            SELECT p.*, pl.nama AS nama_pelanggan, pl.nik, pl.no_hp, pl.no_sim, pl.alamat,
-                   k.plat_nomor, k.merek, k.model, k.warna, k.tahun, jk.nama_jenis,
-                   u.nama AS petugas_nama
-            FROM penyewaan p
-            JOIN pelanggan pl ON pl.id = p.pelanggan_id
-            JOIN kendaraan k ON k.id = p.kendaraan_id
-            JOIN jenis_kendaraan jk ON jk.id = k.jenis_id
-            LEFT JOIN users u ON u.id = p.created_by
-            WHERE p.id = :id
-        ");
-        $stmt->execute(['id' => (int)$id]);
-        $sewa = $stmt->fetch();
+        $sewa = $this->penyewaan->findByIdWithDetails((int)$id);
+
         if (!$sewa) {
             Flash::set('error', 'Transaksi tidak ditemukan.');
             redirect('/penyewaan');
         }
+
         $this->view('penyewaan/show', [
-            'title' => 'Detail Transaksi ' . $sewa['kode_transaksi'],
+            'title' => 'Detail Sewa ' . $sewa['kode_transaksi'],
             'sewa'  => $sewa,
         ]);
     }
@@ -105,12 +85,14 @@ class PenyewaanController extends Controller
     {
         $this->requireAuth();
         $this->verifyCsrf($request);
+
         try {
-            (new PenyewaanService())->serahKunci((int)$id);
-            Flash::set('success', 'Serah kunci berhasil. Status sewa kini Berjalan.');
+            $this->service->serahKunci((int)$id);
+            Flash::set('success', 'Kunci berhasil diserahkan. Masa sewa telah dimulai.');
         } catch (\Throwable $e) {
             Flash::set('error', $e->getMessage());
         }
+
         redirect('/penyewaan/' . $id);
     }
 
@@ -118,12 +100,14 @@ class PenyewaanController extends Controller
     {
         $this->requireAuth();
         $this->verifyCsrf($request);
+
         try {
-            (new PenyewaanService())->batalkan((int)$id);
-            Flash::set('success', 'Transaksi penyewaan telah dibatalkan.');
+            $this->service->batalkan((int)$id);
+            Flash::set('success', 'Transaksi sewa berhasil dibatalkan.');
         } catch (\Throwable $e) {
             Flash::set('error', $e->getMessage());
         }
+
         redirect('/penyewaan/' . $id);
     }
 }
