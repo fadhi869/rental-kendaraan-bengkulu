@@ -1,12 +1,12 @@
 <div class="page-header">
     <div>
         <h1 class="page-title">Laporan Pendapatan</h1>
-        <p class="page-desc">Rekapitulasi penerimaan biaya sewa pokok dan denda keterlambatan berdasarkan periode tanggal.</p>
+        <p class="page-desc">Rekap pendapatan sewa dan denda per periode tanggal.</p>
     </div>
     <div class="page-actions">
         <a href="<?= base_url('laporan/export?dari=' . urlencode($dari) . '&sampai=' . urlencode($sampai)) ?>" class="btn btn-primary">
             <i data-lucide="download" style="width:15px;height:15px;"></i>
-            <span>Ekspor ke CSV</span>
+            <span>Ekspor CSV</span>
         </a>
     </div>
 </div>
@@ -21,7 +21,7 @@
             <label class="form-label">Sampai Tanggal</label>
             <input type="date" name="sampai" value="<?= e($sampai) ?>" class="ui-input" style="width:160px;">
         </div>
-        <button type="submit" class="btn btn-dark">Tampilkan Laporan</button>
+        <button type="submit" class="btn btn-dark">Tampilkan</button>
     </form>
 </div>
 

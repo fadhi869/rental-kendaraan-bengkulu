@@ -1,7 +1,7 @@
 <div class="page-header">
     <div>
-        <h1 class="page-title">Catatan Aktivitas</h1>
-        <p class="page-desc">Jejak audit riwayat login, pembuatan sewa, dan perubahan data sistem.</p>
+        <h1 class="page-title">Aktivitas</h1>
+        <p class="page-desc">Riwayat aktivitas pengguna dalam sistem.</p>
     </div>
 </div>
 

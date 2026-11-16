@@ -57,7 +57,7 @@ class PenyewaanController extends Controller
 
         try {
             $id = $this->service->createRental($request->all());
-            Flash::set('success', 'Transaksi sewa berhasil dibuat.');
+            Flash::set('success', 'Sewa baru berhasil dibuat.');
             redirect('/penyewaan/' . $id);
         } catch (\Throwable $e) {
             Flash::set('error', $e->getMessage());
@@ -88,7 +88,7 @@ class PenyewaanController extends Controller
 
         try {
             $this->service->serahKunci((int)$id);
-            Flash::set('success', 'Kunci berhasil diserahkan. Masa sewa telah dimulai.');
+            Flash::set('success', 'Kunci diserahkan. Masa sewa dimulai.');
         } catch (\Throwable $e) {
             Flash::set('error', $e->getMessage());
         }
@@ -103,7 +103,7 @@ class PenyewaanController extends Controller
 
         try {
             $this->service->batalkan((int)$id);
-            Flash::set('success', 'Transaksi sewa berhasil dibatalkan.');
+            Flash::set('success', 'Sewa berhasil dibatalkan.');
         } catch (\Throwable $e) {
             Flash::set('error', $e->getMessage());
         }

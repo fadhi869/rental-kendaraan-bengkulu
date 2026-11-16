@@ -3,7 +3,7 @@
         <div>
             <a href="<?= base_url('penyewaan') ?>" class="btn btn-outline btn-sm" style="margin-bottom:8px;">
                 <i data-lucide="arrow-left" style="width:14px;height:14px;"></i>
-                <span>Kembali ke Transaksi</span>
+                <span>Kembali</span>
             </a>
             <h1 class="page-title" style="margin-top:4px;"><?= e($sewa['kode_transaksi']) ?></h1>
         </div>
@@ -80,15 +80,15 @@
                 <?= csrf_field() ?>
                 <button type="submit" class="btn btn-primary">
                     <i data-lucide="key" style="width:14px;height:14px;"></i>
-                    <span>Serah Kunci & Mulai Sewa</span>
+                    <span>Serahkan Kunci</span>
                 </button>
             </form>
         <?php endif; ?>
 
         <?php if (in_array($sewa['status'], ['Dipesan', 'Berjalan'], true)): ?>
-            <form action="<?= base_url('penyewaan/' . $sewa['id'] . '/batal') ?>" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan transaksi ini?')">
+            <form action="<?= base_url('penyewaan/' . $sewa['id'] . '/batal') ?>" method="POST" onsubmit="return confirm('Batalkan sewa ini?')">
                 <?= csrf_field() ?>
-                <button type="submit" class="btn btn-danger-soft">Batalkan Transaksi</button>
+                <button type="submit" class="btn btn-danger-soft">Batalkan</button>
             </form>
         <?php endif; ?>
     </div>

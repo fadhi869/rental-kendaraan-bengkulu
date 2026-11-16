@@ -67,7 +67,7 @@
 
             <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
                 <a href="<?= base_url('penyewaan') ?>" class="btn btn-outline">Batal</a>
-                <button type="submit" class="btn btn-primary">Simpan Transaksi</button>
+                <button type="submit" class="btn btn-primary">Simpan</button>
             </div>
         </form>
     </div>

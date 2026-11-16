@@ -1,7 +1,7 @@
 <div class="page-header">
     <div>
-        <h1 class="page-title">Data Kendaraan</h1>
-        <p class="page-desc">Kelola unit armada mobil dan motor yang siap disewakan.</p>
+        <h1 class="page-title">Kendaraan</h1>
+        <p class="page-desc">Kelola seluruh unit armada rental.</p>
     </div>
     <div class="page-actions">
         <a href="<?= base_url('kendaraan/create') ?>" class="btn btn-primary">

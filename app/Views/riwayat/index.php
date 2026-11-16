@@ -1,7 +1,7 @@
 <div class="page-header">
     <div>
-        <h1 class="page-title">Riwayat Penyewaan</h1>
-        <p class="page-desc">Arsip seluruh transaksi rental selesai, berjalan, dipesan, maupun dibatalkan.</p>
+        <h1 class="page-title">Riwayat</h1>
+        <p class="page-desc">Riwayat seluruh transaksi sewa kendaraan.</p>
     </div>
 </div>
 

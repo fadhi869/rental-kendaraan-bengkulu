@@ -58,14 +58,14 @@ class UserController extends Controller
         }
 
         if ($this->user->isUsernameTaken($data['username'])) {
-            Flash::set('error', 'Username tersebut sudah digunakan.');
+            Flash::set('error', 'Username sudah terdaftar.');
             redirect('/admin/users/create');
         }
 
         $this->user->create($data);
         ActivityLogger::log('TAMBAH_USER', 'user_management', 'Menambahkan pengguna baru: ' . trim($data['nama']));
 
-        Flash::set('success', 'Akun pengguna berhasil ditambahkan.');
+        Flash::set('success', 'Pengguna berhasil disimpan.');
         redirect('/admin/users');
     }
 
@@ -109,14 +109,14 @@ class UserController extends Controller
         }
 
         if ($this->user->isUsernameTaken($data['username'], $intId)) {
-            Flash::set('error', 'Username tersebut sudah digunakan oleh akun lain.');
+            Flash::set('error', 'Username sudah terdaftar.');
             redirect("/admin/users/{$id}/edit");
         }
 
         $this->user->update($intId, $data);
         ActivityLogger::log('UPDATE_USER', 'user_management', 'Memperbarui data pengguna ' . trim($data['nama']));
 
-        Flash::set('success', 'Data pengguna berhasil diperbarui.');
+        Flash::set('success', 'Pengguna berhasil diperbarui.');
         redirect('/admin/users');
     }
 
@@ -127,7 +127,7 @@ class UserController extends Controller
         $intId = (int)$id;
 
         if ($intId === Auth::id()) {
-            Flash::set('error', 'Anda tidak dapat menonaktifkan akun sendiri.');
+            Flash::set('error', 'Tidak dapat menonaktifkan akun sendiri.');
             redirect('/admin/users');
         }
 
@@ -146,7 +146,7 @@ class UserController extends Controller
         $intId = (int)$id;
 
         if ($intId === Auth::id()) {
-            Flash::set('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+            Flash::set('error', 'Tidak dapat menghapus akun sendiri.');
             redirect('/admin/users');
         }
 
@@ -154,9 +154,9 @@ class UserController extends Controller
         try {
             $this->user->softDelete($intId);
             ActivityLogger::log('HAPUS_USER', 'user_management', 'Menghapus akun pengguna: ' . ($target['nama'] ?? "ID {$id}"));
-            Flash::set('success', 'Akun pengguna berhasil dihapus.');
+            Flash::set('success', 'Pengguna berhasil dihapus.');
         } catch (\Throwable $e) {
-            Flash::set('error', 'Gagal menghapus akun pengguna.');
+            Flash::set('error', 'Gagal menghapus pengguna.');
         }
         redirect('/admin/users');
     }

@@ -99,7 +99,7 @@ class JenisKendaraanController extends Controller
         $intId = (int)$id;
 
         if ($this->jenis->hasUnits($intId)) {
-            Flash::set('error', 'Kategori ini tidak dapat dihapus karena masih digunakan oleh unit armada.');
+            Flash::set('error', 'Jenis tidak bisa dihapus karena masih dipakai unit.');
             redirect('/jenis-kendaraan');
         }
 
@@ -108,7 +108,7 @@ class JenisKendaraanController extends Controller
             ActivityLogger::log('HAPUS', 'jenis_kendaraan', 'Menghapus jenis kendaraan ID ' . $id);
             Flash::set('success', 'Jenis kendaraan berhasil dihapus.');
         } catch (\Throwable $e) {
-            Flash::set('error', 'Gagal menghapus jenis kendaraan: data masih terhubung dengan unit armada.');
+            Flash::set('error', 'Gagal menghapus jenis kendaraan.');
         }
         redirect('/jenis-kendaraan');
     }

@@ -1,7 +1,7 @@
 <div class="page-header">
     <div>
-        <h1 class="page-title">Pengembalian Kendaraan</h1>
-        <p class="page-desc">Proses serah terima unit yang kembali. Denda keterlambatan dihitung otomatis (pengali denda: <strong><?= $multiplier ?>x</strong>).</p>
+        <h1 class="page-title">Pengembalian</h1>
+        <p class="page-desc">Proses pengembalian unit sewa. Denda dihitung otomatis (pengali: <strong><?= $multiplier ?>x</strong>).</p>
     </div>
 </div>
 

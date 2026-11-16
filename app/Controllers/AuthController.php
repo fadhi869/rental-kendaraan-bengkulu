@@ -35,7 +35,7 @@ class AuthController extends Controller
         }
 
         if (($user['status'] ?? 'active') !== 'active') {
-            Flash::set('error', 'Akun Anda sedang dinonaktifkan. Silakan hubungi administrator.');
+            Flash::set('error', 'Akun dinonaktifkan. Hubungi admin.');
             redirect('/login');
         }
 
@@ -43,7 +43,7 @@ class AuthController extends Controller
         Auth::login($user);
         ActivityLogger::log('LOGIN', 'auth', "Pengguna {$user['nama']} masuk ke sistem.", (int)$user['id']);
 
-        Flash::set('success', "Selamat datang kembali, {$user['nama']}!");
+        Flash::set('success', "Selamat datang, {$user['nama']}!");
         redirect('/dashboard');
     }
 
@@ -54,7 +54,7 @@ class AuthController extends Controller
             ActivityLogger::log('LOGOUT', 'auth', 'Pengguna keluar dari sistem.');
         }
         Auth::logout();
-        Flash::set('success', 'Anda telah keluar dari aplikasi.');
+        Flash::set('success', 'Anda telah keluar.');
         redirect('/login');
     }
 }

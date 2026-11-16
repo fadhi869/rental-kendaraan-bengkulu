@@ -40,7 +40,7 @@ $isActive = function(string $route) use ($uri): string {
             </a>
             <a href="<?= base_url('riwayat') ?>" class="nav-item <?= $isActive('riwayat') ?>">
                 <i data-lucide="history" style="width:16px;height:16px;"></i>
-                <span>Riwayat Sewa</span>
+                <span>Riwayat</span>
             </a>
         </div>
 
@@ -48,7 +48,7 @@ $isActive = function(string $route) use ($uri): string {
             <div class="nav-heading">Data Master</div>
             <a href="<?= base_url('kendaraan') ?>" class="nav-item <?= $isActive('kendaraan') ?>">
                 <i data-lucide="car-front" style="width:16px;height:16px;"></i>
-                <span>Data Kendaraan</span>
+                <span>Kendaraan</span>
             </a>
             <a href="<?= base_url('jenis-kendaraan') ?>" class="nav-item <?= $isActive('jenis-kendaraan') ?>">
                 <i data-lucide="tag" style="width:16px;height:16px;"></i>
@@ -56,7 +56,7 @@ $isActive = function(string $route) use ($uri): string {
             </a>
             <a href="<?= base_url('pelanggan') ?>" class="nav-item <?= $isActive('pelanggan') ?>">
                 <i data-lucide="users" style="width:16px;height:16px;"></i>
-                <span>Data Pelanggan</span>
+                <span>Pelanggan</span>
             </a>
         </div>
 
@@ -64,16 +64,16 @@ $isActive = function(string $route) use ($uri): string {
             <div class="nav-heading">Laporan & Pengaturan</div>
             <a href="<?= base_url('laporan') ?>" class="nav-item <?= $isActive('laporan') ?>">
                 <i data-lucide="bar-chart-2" style="width:16px;height:16px;"></i>
-                <span>Laporan Pendapatan</span>
+                <span>Laporan</span>
             </a>
             <?php if ($isAdmin): ?>
             <a href="<?= base_url('admin/users') ?>" class="nav-item <?= $isActive('admin/users') ?>">
                 <i data-lucide="shield" style="width:16px;height:16px;"></i>
-                <span>Kelola Pengguna</span>
+                <span>Pengguna</span>
             </a>
             <a href="<?= base_url('aktivitas') ?>" class="nav-item <?= $isActive('aktivitas') ?>">
                 <i data-lucide="activity" style="width:16px;height:16px;"></i>
-                <span>Catatan Aktivitas</span>
+                <span>Aktivitas</span>
             </a>
             <?php endif; ?>
         </div>

@@ -59,14 +59,14 @@ class PelangganController extends Controller
         }
 
         if ($this->pelanggan->isNikTaken($data['nik'])) {
-            Flash::set('error', 'NIK tersebut sudah terdaftar.');
+            Flash::set('error', 'NIK sudah terdaftar.');
             redirect('/pelanggan/create');
         }
 
         $this->pelanggan->create($data);
         ActivityLogger::log('TAMBAH', 'pelanggan', 'Menambah data pelanggan: ' . trim($data['nama']));
 
-        Flash::set('success', 'Data pelanggan berhasil disimpan.');
+        Flash::set('success', 'Pelanggan berhasil disimpan.');
         redirect('/pelanggan');
     }
 
@@ -76,7 +76,7 @@ class PelangganController extends Controller
         $item = $this->pelanggan->findById((int)$id);
 
         if (!$item) {
-            Flash::set('error', 'Data pelanggan tidak ditemukan.');
+            Flash::set('error', 'Pelanggan tidak ditemukan.');
             redirect('/pelanggan');
         }
 
@@ -107,14 +107,14 @@ class PelangganController extends Controller
         }
 
         if ($this->pelanggan->isNikTaken($data['nik'], $intId)) {
-            Flash::set('error', 'NIK tersebut sudah digunakan oleh pelanggan lain.');
+            Flash::set('error', 'NIK sudah terdaftar.');
             redirect("/pelanggan/{$id}/edit");
         }
 
         $this->pelanggan->update($intId, $data);
         ActivityLogger::log('UPDATE', 'pelanggan', 'Memperbarui data pelanggan ' . trim($data['nama']));
 
-        Flash::set('success', 'Data pelanggan berhasil diperbarui.');
+        Flash::set('success', 'Pelanggan berhasil diperbarui.');
         redirect('/pelanggan');
     }
 
@@ -125,12 +125,12 @@ class PelangganController extends Controller
         $intId = (int)$id;
 
         if ($this->pelanggan->hasActiveRentals($intId)) {
-            Flash::set('error', 'Pelanggan tidak dapat dihapus karena masih memiliki sewa aktif.');
+            Flash::set('error', 'Pelanggan tidak bisa dihapus karena sewa masih aktif.');
             redirect('/pelanggan');
         }
 
         if ($this->pelanggan->hasRentals($intId)) {
-            Flash::set('error', 'Pelanggan tidak dapat dihapus karena tersimpan dalam riwayat transaksi penyewaan.');
+            Flash::set('error', 'Pelanggan tidak bisa dihapus karena ada riwayat sewa.');
             redirect('/pelanggan');
         }
 
@@ -138,9 +138,9 @@ class PelangganController extends Controller
         try {
             $this->pelanggan->delete($intId);
             ActivityLogger::log('HAPUS', 'pelanggan', 'Menghapus data pelanggan ' . ($customer['nama'] ?? "ID {$id}"));
-            Flash::set('success', 'Data pelanggan berhasil dihapus.');
+            Flash::set('success', 'Pelanggan berhasil dihapus.');
         } catch (\Throwable $e) {
-            Flash::set('error', 'Gagal menghapus pelanggan: data masih terhubung dengan transaksi lain.');
+            Flash::set('error', 'Gagal menghapus pelanggan: data masih terhubung.');
         }
         redirect('/pelanggan');
     }

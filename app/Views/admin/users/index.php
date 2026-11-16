@@ -1,7 +1,7 @@
 <div class="page-header">
     <div>
-        <h1 class="page-title">Kelola Pengguna</h1>
-        <p class="page-desc">Atur akun petugas operasional dan administrator sistem.</p>
+        <h1 class="page-title">Pengguna</h1>
+        <p class="page-desc">Kelola akun petugas dan admin sistem.</p>
     </div>
     <div class="page-actions">
         <a href="<?= base_url('admin/users/create') ?>" class="btn btn-primary">

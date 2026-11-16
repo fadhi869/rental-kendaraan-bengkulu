@@ -1,7 +1,7 @@
 <div class="page-header">
     <div>
-        <h1 class="page-title">Transaksi Penyewaan</h1>
-        <p class="page-desc">Kelola pemesanan, serah kunci armada, dan pemantauan masa sewa kendaraan.</p>
+        <h1 class="page-title">Penyewaan</h1>
+        <p class="page-desc">Kelola transaksi sewa dan status armada.</p>
     </div>
     <div class="page-actions">
         <a href="<?= base_url('penyewaan/create') ?>" class="btn btn-primary">

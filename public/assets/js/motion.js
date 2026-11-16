@@ -273,6 +273,71 @@
     });
   };
 
+  // 10. Login Form Micro-Interactions (Password Toggle, Submit Spinner, Error Shake)
+  function initLoginFormInteractions() {
+    const form = document.getElementById('loginForm');
+    const card = document.getElementById('loginCard');
+    const pwdInput = document.getElementById('password');
+    const toggleBtn = document.getElementById('passwordToggleBtn');
+    const toggleIcon = document.getElementById('passwordToggleIcon');
+    const submitBtn = document.getElementById('btnLogin');
+
+    // Password Toggle
+    if (toggleBtn && pwdInput) {
+      toggleBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        const isPassword = pwdInput.getAttribute('type') === 'password';
+        pwdInput.setAttribute('type', isPassword ? 'text' : 'password');
+        toggleBtn.classList.toggle('toggled', isPassword);
+
+        if (toggleIcon) {
+          toggleIcon.setAttribute('data-lucide', isPassword ? 'eye-off' : 'eye');
+          if (window.lucide && typeof window.lucide.createIcons === 'function') {
+            window.lucide.createIcons();
+          }
+        }
+        pwdInput.focus();
+      });
+    }
+
+    // Form Submit Tactile Feedback & Loading Spinner
+    if (form && submitBtn) {
+      form.addEventListener('submit', function (e) {
+        const usernameInput = document.getElementById('username');
+        const usernameVal = usernameInput ? usernameInput.value.trim() : '';
+        const passwordVal = pwdInput ? pwdInput.value : '';
+
+        // Validation check before submitting
+        if (!usernameVal || !passwordVal) {
+          e.preventDefault();
+          if (card) {
+            card.classList.remove('error-shake');
+            void card.offsetWidth; // Reflow to restart animation
+            card.classList.add('error-shake');
+          }
+          if (!usernameVal && usernameInput) {
+            usernameInput.focus();
+          } else if (!passwordVal && pwdInput) {
+            pwdInput.focus();
+          }
+          return;
+        }
+
+        // Activate tactile loading spinner
+        submitBtn.classList.add('is-loading');
+      });
+    }
+
+    // Clean up error-shake class after animation ends
+    if (card && card.classList.contains('error-shake')) {
+      card.addEventListener('animationend', function (e) {
+        if (e.animationName === 'errorShake') {
+          card.classList.remove('error-shake');
+        }
+      }, { once: true });
+    }
+  }
+
   // Run all motion initializers on DOM load
   document.addEventListener('DOMContentLoaded', () => {
     initTiltAndSpotlight();
@@ -281,5 +346,6 @@
     initMagneticButtons();
     initRipple();
     initSidebarGlider();
+    initLoginFormInteractions();
   });
 })();

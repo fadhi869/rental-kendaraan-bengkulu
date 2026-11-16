@@ -1,7 +1,7 @@
 <div class="page-header">
     <div>
-        <h1 class="page-title">Data Pelanggan</h1>
-        <p class="page-desc">Daftar pelanggan, nomor identitas (NIK/SIM), dan kontak penyewa.</p>
+        <h1 class="page-title">Pelanggan</h1>
+        <p class="page-desc">Daftar pelanggan dan kontak penyewa.</p>
     </div>
     <div class="page-actions">
         <a href="<?= base_url('pelanggan/create') ?>" class="btn btn-primary">

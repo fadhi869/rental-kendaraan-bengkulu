@@ -7,7 +7,7 @@ $pctPerawatan = round(((int)$stats['kendaraan_perawatan'] / $totalFleet) * 100);
 <div class="page-header">
     <div>
         <h1 class="page-title">Ringkasan Operasional</h1>
-        <p class="page-desc">Status armada, penyewaan berjalan, dan penerimaan rental saat ini.</p>
+        <p class="page-desc">Pantau status armada dan transaksi hari ini.</p>
     </div>
     <div class="page-actions">
         <a href="<?= base_url('laporan') ?>" class="btn btn-outline btn-magnetic">
@@ -86,7 +86,7 @@ $pctPerawatan = round(((int)$stats['kendaraan_perawatan'] / $totalFleet) * 100);
             <div style="font-size:21px;font-weight:800;color:#FFFFFF;letter-spacing:-0.01em;">
                 <span class="odometer-digit" data-counter-target="<?= (float)$stats['total_pendapatan'] ?>" data-counter-currency="true">Rp 0</span>
             </div>
-            <div style="font-size:11.5px;color:#A8A5A6;margin-top:2px;">Akumulasi sewa & denda</div>
+            <div style="font-size:11.5px;color:#A8A5A6;margin-top:2px;">Total sewa & denda</div>
         </div>
     </div>
 </div>
@@ -97,7 +97,7 @@ $pctPerawatan = round(((int)$stats['kendaraan_perawatan'] / $totalFleet) * 100);
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
             <div>
                 <h2 class="card-title">Grafik Pendapatan Sewa</h2>
-                <p class="card-desc">Pendapatan per hari berdasarkan tanggal mulai transaksi</p>
+                <p class="card-desc">Pendapatan harian berdasarkan tanggal mulai sewa.</p>
             </div>
             <span style="font-size:11.5px;font-weight:600;color:var(--text-secondary);background:var(--bg-warm);padding:4px 10px;border-radius:var(--radius-sm);border:1px solid var(--border);">
                 10 Transaksi Terakhir
@@ -111,7 +111,7 @@ $pctPerawatan = round(((int)$stats['kendaraan_perawatan'] / $totalFleet) * 100);
     <div class="card col-4" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between;">
         <div>
             <h2 class="card-title">Ketersediaan Unit</h2>
-            <p class="card-desc" style="margin-bottom:16px;">Kondisi operasional kendaraan hari ini</p>
+            <p class="card-desc" style="margin-bottom:16px;">Status kendaraan hari ini.</p>
 
             <div style="display:flex;flex-direction:column;gap:10px;">
                 <!-- Tersedia -->
@@ -172,8 +172,8 @@ $pctPerawatan = round(((int)$stats['kendaraan_perawatan'] / $totalFleet) * 100);
 <div class="card" style="overflow:hidden;">
     <div class="card-header">
         <div>
-            <h2 class="card-title">Penyewaan Aktif & Reservasi</h2>
-            <p class="card-desc">Unit yang sedang berjalan atau menunggu jadwal serah kunci</p>
+            <h2 class="card-title">Sewa Aktif & Booking</h2>
+            <p class="card-desc">Unit yang sedang dipakai atau menunggu diambil.</p>
         </div>
         <a href="<?= base_url('penyewaan') ?>" class="btn btn-outline btn-sm btn-magnetic">
             <span>Lihat Semua Transaksi</span>

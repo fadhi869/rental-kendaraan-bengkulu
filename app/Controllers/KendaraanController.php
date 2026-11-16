@@ -70,14 +70,14 @@ class KendaraanController extends Controller
         }
 
         if ($this->kendaraan->isPlateTaken($data['plat_nomor'])) {
-            Flash::set('error', 'Plat nomor sudah digunakan oleh kendaraan lain.');
+            Flash::set('error', 'Plat nomor sudah terdaftar.');
             redirect('/kendaraan/create');
         }
 
         $this->kendaraan->create($data);
         ActivityLogger::log('TAMBAH', 'kendaraan', 'Menambah unit kendaraan: ' . strtoupper(trim($data['plat_nomor'])));
 
-        Flash::set('success', 'Data kendaraan berhasil disimpan.');
+        Flash::set('success', 'Kendaraan berhasil disimpan.');
         redirect('/kendaraan');
     }
 
@@ -87,7 +87,7 @@ class KendaraanController extends Controller
         $item = $this->kendaraan->findById((int)$id);
 
         if (!$item) {
-            Flash::set('error', 'Data kendaraan tidak ditemukan.');
+            Flash::set('error', 'Kendaraan tidak ditemukan.');
             redirect('/kendaraan');
         }
 
@@ -123,14 +123,14 @@ class KendaraanController extends Controller
         }
 
         if ($this->kendaraan->isPlateTaken($data['plat_nomor'], $intId)) {
-            Flash::set('error', 'Plat nomor sudah digunakan oleh kendaraan lain.');
+            Flash::set('error', 'Plat nomor sudah terdaftar.');
             redirect("/kendaraan/{$id}/edit");
         }
 
         $this->kendaraan->update($intId, $data);
         ActivityLogger::log('UPDATE', 'kendaraan', 'Memperbarui data unit ' . strtoupper(trim($data['plat_nomor'])));
 
-        Flash::set('success', 'Data kendaraan berhasil diperbarui.');
+        Flash::set('success', 'Kendaraan berhasil diperbarui.');
         redirect('/kendaraan');
     }
 
@@ -141,12 +141,12 @@ class KendaraanController extends Controller
         $intId = (int)$id;
 
         if ($this->kendaraan->hasActiveRentals($intId)) {
-            Flash::set('error', 'Kendaraan tidak dapat dihapus karena masih ada transaksi sewa aktif.');
+            Flash::set('error', 'Kendaraan tidak bisa dihapus karena masih disewa.');
             redirect('/kendaraan');
         }
 
         if ($this->kendaraan->hasRentals($intId)) {
-            Flash::set('error', 'Kendaraan tidak dapat dihapus karena tersimpan dalam riwayat penyewaan.');
+            Flash::set('error', 'Kendaraan tidak bisa dihapus karena ada riwayat sewa.');
             redirect('/kendaraan');
         }
 
@@ -154,9 +154,9 @@ class KendaraanController extends Controller
         try {
             $this->kendaraan->delete($intId);
             ActivityLogger::log('HAPUS', 'kendaraan', 'Menghapus unit ' . ($unit['plat_nomor'] ?? "ID {$id}"));
-            Flash::set('success', 'Data kendaraan berhasil dihapus.');
+            Flash::set('success', 'Kendaraan berhasil dihapus.');
         } catch (\Throwable $e) {
-            Flash::set('error', 'Gagal menghapus kendaraan: unit masih terhubung dengan data lain.');
+            Flash::set('error', 'Gagal menghapus kendaraan: unit masih terhubung.');
         }
         redirect('/kendaraan');
     }

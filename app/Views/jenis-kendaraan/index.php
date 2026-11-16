@@ -1,7 +1,7 @@
 <div class="page-header">
     <div>
         <h1 class="page-title">Jenis Kendaraan</h1>
-        <p class="page-desc">Kelola kategori tipe kendaraan armada dan deskripsi layanan.</p>
+        <p class="page-desc">Kelola kategori tipe kendaraan armada.</p>
     </div>
     <div class="page-actions">
         <a href="<?= base_url('jenis-kendaraan/create') ?>" class="btn btn-primary">
