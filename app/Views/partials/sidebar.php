@@ -27,19 +27,15 @@ $isActive = function(string $route) use ($uri): string {
         <div class="nav-group">
             <div class="nav-heading">Menu Utama</div>
             <a href="<?= base_url('dashboard') ?>" class="nav-item <?= $isActive('dashboard') ?>">
-                <i data-lucide="layout-dashboard" style="width:16px;height:16px;"></i>
                 <span>Dashboard</span>
             </a>
             <a href="<?= base_url('penyewaan') ?>" class="nav-item <?= $isActive('penyewaan') ?>">
-                <i data-lucide="key" style="width:16px;height:16px;"></i>
                 <span>Penyewaan</span>
             </a>
             <a href="<?= base_url('pengembalian') ?>" class="nav-item <?= $isActive('pengembalian') ?>">
-                <i data-lucide="rotate-ccw" style="width:16px;height:16px;"></i>
                 <span>Pengembalian</span>
             </a>
             <a href="<?= base_url('riwayat') ?>" class="nav-item <?= $isActive('riwayat') ?>">
-                <i data-lucide="history" style="width:16px;height:16px;"></i>
                 <span>Riwayat</span>
             </a>
         </div>
@@ -47,15 +43,12 @@ $isActive = function(string $route) use ($uri): string {
         <div class="nav-group">
             <div class="nav-heading">Data Master</div>
             <a href="<?= base_url('kendaraan') ?>" class="nav-item <?= $isActive('kendaraan') ?>">
-                <i data-lucide="car-front" style="width:16px;height:16px;"></i>
                 <span>Kendaraan</span>
             </a>
             <a href="<?= base_url('jenis-kendaraan') ?>" class="nav-item <?= $isActive('jenis-kendaraan') ?>">
-                <i data-lucide="tag" style="width:16px;height:16px;"></i>
                 <span>Jenis Kendaraan</span>
             </a>
             <a href="<?= base_url('pelanggan') ?>" class="nav-item <?= $isActive('pelanggan') ?>">
-                <i data-lucide="users" style="width:16px;height:16px;"></i>
                 <span>Pelanggan</span>
             </a>
         </div>
@@ -63,16 +56,13 @@ $isActive = function(string $route) use ($uri): string {
         <div class="nav-group">
             <div class="nav-heading">Laporan & Pengaturan</div>
             <a href="<?= base_url('laporan') ?>" class="nav-item <?= $isActive('laporan') ?>">
-                <i data-lucide="bar-chart-2" style="width:16px;height:16px;"></i>
                 <span>Laporan</span>
             </a>
             <?php if ($isAdmin): ?>
             <a href="<?= base_url('admin/users') ?>" class="nav-item <?= $isActive('admin/users') ?>">
-                <i data-lucide="shield" style="width:16px;height:16px;"></i>
                 <span>Pengguna</span>
             </a>
             <a href="<?= base_url('aktivitas') ?>" class="nav-item <?= $isActive('aktivitas') ?>">
-                <i data-lucide="activity" style="width:16px;height:16px;"></i>
                 <span>Aktivitas</span>
             </a>
             <?php endif; ?>
