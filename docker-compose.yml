@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=rental_kendaraan
+      - DB_USERNAME=rental_user
+      - DB_PASSWORD=rental_secret
+      - APP_ENV=production
+      - APP_DEBUG=false
+    depends_on:
+      - db
+    restart: always
+
+  db:
+    image: mysql:8.0
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root_secret_password
+      MYSQL_DATABASE: rental_kendaraan
+      MYSQL_USER: rental_user
+      MYSQL_PASSWORD: rental_secret
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: always
+
+volumes:
+  db_data:
