@@ -8,7 +8,7 @@
     </div>
 
     <div class="topbar-right">
-        <a href="<?= base_url('penyewaan/create') ?>" class="btn btn-primary btn-sm">
+        <a href="<?= base_url('penyewaan/create') ?>" class="btn btn-primary btn-premium-cta btn-sm">
             <i data-lucide="plus" style="width:14px;height:14px;"></i>
             <span>Sewa Baru</span>
         </a>
