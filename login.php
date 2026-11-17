@@ -16,54 +16,122 @@ if (Auth::check()) {
 }
 
 $flash = Flash::get();
+$hasError = ($flash && $flash['type'] === 'error');
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Halaman Login — Rental Kendaraan</title>
+    <title>Masuk — Rental Armada Bengkulu</title>
     <link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="auth-body" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg-app);padding:20px;">
-    <div class="auth-card" style="width:100%;max-width:440px;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:36px;box-shadow:var(--shadow-lg);">
-        <div style="text-align:center;margin-bottom:28px;">
-            <div style="width:52px;height:52px;border-radius:14px;background:var(--primary);color:#fff;display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px;">
-                <i data-lucide="car" style="width:26px;height:26px;"></i>
-            </div>
-            <div style="font-size:12px;font-weight:700;color:var(--text-secondary);letter-spacing:1px;text-transform:uppercase;">MANAJEMEN RENTAL KENDARAAN</div>
-            <h1 style="font-size:22px;font-weight:800;color:var(--text-primary);margin:6px 0 0 0;">Halaman Login</h1>
-        </div>
+<body class="auth-body">
+    <div class="auth-center-wrapper" id="authWrapper">
+        <!-- Ambient Interactive Dot-Grid & Spotlight Background -->
+        <div class="auth-grid-bg" aria-hidden="true"></div>
+        <div class="auth-ambient-spotlight" id="authAmbientSpotlight" aria-hidden="true"></div>
 
-        <?php if ($flash): ?>
-        <div style="padding:12px 14px;border-radius:var(--radius-md);margin-bottom:20px;font-size:13px;background:<?= $flash['type']==='success'?'rgba(22,163,74,0.1)':'rgba(220,38,38,0.1)' ?>;border:1px solid <?= $flash['type']==='success'?'rgba(22,163,74,0.3)':'rgba(220,38,38,0.3)' ?>;color:<?= $flash['type']==='success'?'var(--success)':'var(--danger)' ?>;">
-            <?= e($flash['message']) ?>
-        </div>
-        <?php endif; ?>
-
-        <form action="<?= base_url('login.php') ?>" method="POST">
-            <?= csrf_field() ?>
-
-            <div style="margin-bottom:18px;">
-                <label style="display:block;font-size:12.5px;font-weight:600;color:var(--text-primary);margin-bottom:6px;">Username</label>
-                <input type="text" name="username" class="form-input" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-md);" placeholder="Masukkan username" required autofocus>
+        <div class="auth-card-clean <?= $hasError ? 'error-shake' : '' ?>" id="loginCard">
+            <!-- Logo & Brand Header with Micro-Motion -->
+            <div class="auth-header">
+                <div class="auth-brand-badge" id="brandBadge" title="Armada Bengkulu">
+                    <i data-lucide="car" class="brand-car-icon" style="width:22px;height:22px;"></i>
+                </div>
+                <div class="auth-brand-name">Armada Bengkulu</div>
+                <h1 class="auth-title">Masuk ke Dashboard</h1>
+                <p class="auth-subtitle">Kelola operasional rental dalam satu tempat.</p>
             </div>
 
-            <div style="margin-bottom:24px;">
-                <label style="display:block;font-size:12.5px;font-weight:600;color:var(--text-primary);margin-bottom:6px;">Password</label>
-                <input type="password" name="password" class="form-input" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-md);" placeholder="Masukkan password" required>
+            <?php if ($flash): ?>
+                <div class="alert <?= $flash['type'] === 'success' ? 'alert-success' : 'alert-error' ?> auth-alert-enter" style="margin-bottom:20px;">
+                    <span><?= e($flash['message']) ?></span>
+                    <button type="button" class="alert-close" onclick="this.parentElement.remove()" aria-label="Tutup notifikasi">&times;</button>
+                </div>
+            <?php endif; ?>
+
+            <form action="<?= base_url('login.php') ?>" method="POST" id="loginForm" novalidate>
+                <?= csrf_field() ?>
+
+                <!-- Username / Email Field -->
+                <div class="form-group-animated" id="groupUsername">
+                    <label class="floating-label" for="username">Username atau Email</label>
+                    <div class="input-focus-wrap">
+                        <span class="input-leading-icon">
+                            <i data-lucide="user" style="width:16px;height:16px;"></i>
+                        </span>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            class="animated-input" 
+                            placeholder="Masukkan username atau email" 
+                            required 
+                            autofocus
+                            autocomplete="username"
+                        >
+                    </div>
+                </div>
+
+                <!-- Password Field with Interactive Eye Toggle -->
+                <div class="form-group-animated" id="groupPassword">
+                    <label class="floating-label" for="password">Kata Sandi</label>
+                    <div class="input-focus-wrap" id="passwordWrap">
+                        <span class="input-leading-icon">
+                            <i data-lucide="lock" style="width:16px;height:16px;"></i>
+                        </span>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="animated-input input-has-trailing" 
+                            placeholder="Masukkan kata sandi" 
+                            required 
+                            autocomplete="current-password"
+                        >
+                        <button 
+                            type="button" 
+                            id="passwordToggleBtn" 
+                            class="password-toggle-btn" 
+                            aria-label="Tampilkan atau sembunyikan kata sandi"
+                            tabindex="-1"
+                        >
+                            <i data-lucide="eye" id="passwordToggleIcon" class="toggle-eye-icon" style="width:16px;height:16px;"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Remember Me with Springy Custom Checkmark -->
+                <div class="login-options-row" id="rowOptions">
+                    <label class="custom-check-wrap" for="remember_me">
+                        <input type="checkbox" id="remember_me" name="remember_me" class="custom-check-native">
+                        <span class="custom-check-box" aria-hidden="true">
+                            <svg class="check-icon" viewBox="0 0 14 14" fill="none">
+                                <path class="check-path" d="M2.5 7.5L5.5 10.5L11.5 3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                        <span class="check-label-text">Ingat saya</span>
+                    </label>
+                </div>
+
+                <!-- Primary Submit Button with Tactile Physics, Shimmer & Spinner -->
+                <button type="submit" id="btnLogin" class="btn-login-submit">
+                    <span class="btn-content">
+                        <span class="btn-text">Masuk</span>
+                        <i data-lucide="arrow-right" class="btn-icon" style="width:15px;height:15px;"></i>
+                    </span>
+                    <span class="btn-spinner" aria-hidden="true"></span>
+                </button>
+            </form>
+
+            <div class="auth-footer-simple" id="authFooter">
+                <span>&copy; <?= date('Y') ?> Armada Bengkulu &bull; Sistem Rental</span>
             </div>
-
-            <button type="submit" class="btn btn-primary" style="width:100%;padding:12px;font-size:14px;font-weight:700;border-radius:var(--radius-md);">
-                Masuk ke Sistem
-            </button>
-        </form>
-
-        <div style="margin-top:24px;padding-top:18px;border-top:1px solid var(--border);text-align:center;font-size:12px;color:var(--text-secondary);">
-            <span>Kelompok 1 &bull; Tugas Besar Praktikum PBO</span>
         </div>
     </div>
+
+    <script src="<?= base_url('assets/js/motion.js') ?>"></script>
     <script>
     if (typeof lucide !== 'undefined') { lucide.createIcons(); }
     </script>

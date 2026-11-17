@@ -436,71 +436,9 @@ function render_layout(string $title, string $activePage, string $content): void
         if (backdrop) backdrop.addEventListener('click', closeSidebar);
         document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSidebar(); });
         if (window.lucide && typeof window.lucide.createIcons === 'function') { window.lucide.createIcons(); }
-
-        // Motion & Micro-interactions
-        const cards = document.querySelectorAll('.tilt-card');
-        cards.forEach((card) => {
-            let isHovered = false;
-            card.addEventListener('mouseenter', () => { isHovered = true; });
-            card.addEventListener('mousemove', (e) => {
-                if (!isHovered) return;
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left, y = e.clientY - rect.top;
-                card.style.setProperty('--mouse-x', `${x}px`);
-                card.style.setProperty('--mouse-y', `${y}px`);
-                const deltaX = (x - rect.width / 2) / (rect.width / 2);
-                const deltaY = (y - rect.height / 2) / (rect.height / 2);
-                card.style.transform = `perspective(900px) rotateX(${(-deltaY * 6.5).toFixed(2)}deg) rotateY(${(deltaX * 6.5).toFixed(2)}deg) scale3d(1.018, 1.018, 1.018)`;
-            });
-            card.addEventListener('mouseleave', () => {
-                isHovered = false;
-                card.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
-            });
-        });
-
-        // Odometer / Counter Roll Effect
-        const counters = document.querySelectorAll('[data-counter-target]');
-        counters.forEach((el) => {
-            const target = parseFloat(el.getAttribute('data-counter-target') || '0');
-            const isCurrency = el.getAttribute('data-counter-currency') === 'true';
-            const duration = 1200;
-            const startTime = performance.now();
-            function update(now) {
-                const elapsed = now - startTime;
-                const p = Math.min(elapsed / duration, 1);
-                const ease = p === 1 ? 1 : 1 - Math.pow(2, -10 * p);
-                const val = Math.round(ease * target);
-                el.textContent = isCurrency ? 'Rp ' + val.toLocaleString('id-ID') : val.toLocaleString('id-ID');
-                if (p < 1) requestAnimationFrame(update);
-                else el.textContent = isCurrency ? 'Rp ' + target.toLocaleString('id-ID') : target.toLocaleString('id-ID');
-            }
-            requestAnimationFrame(update);
-        });
-
-        // Progress bar fills
-        setTimeout(() => {
-            document.querySelectorAll('.progress-liquid-fill').forEach((fill) => {
-                fill.style.width = (fill.getAttribute('data-fill-percent') || '0') + '%';
-            });
-        }, 150);
-
-        // Tactile ripple effect on buttons
-        document.addEventListener('click', (e) => {
-            const btn = e.target.closest('.btn-magnetic, .btn-premium-cta, .btn');
-            if (!btn) return;
-            const rect = btn.getBoundingClientRect();
-            const ripple = document.createElement('span');
-            ripple.classList.add('ripple-span');
-            const size = Math.max(rect.width, rect.height) * 2;
-            ripple.style.width = `${size}px`;
-            ripple.style.height = `${size}px`;
-            ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
-            ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
-            btn.appendChild(ripple);
-            setTimeout(() => ripple.remove(), 600);
-        });
     });
     </script>
+    <script src="<?= base_url('assets/js/motion.js') ?>"></script>
 </body>
 </html>
     <?php
