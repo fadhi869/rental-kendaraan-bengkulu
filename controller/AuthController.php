@@ -21,8 +21,8 @@ class AuthController extends Controller
         $username = trim((string)$request->input('username'));
         $password = (string)$request->input('password');
 
-        $adminModel = new Admin();
-        $user = $adminModel->findByUsername($username);
+        $penggunaModel = new Pengguna();
+        $user = $penggunaModel->findByUsername($username);
 
         if (!$user || !password_verify($password, $user['password'])) {
             Flash::set('error', 'Username atau password yang dimasukkan salah.');
@@ -34,9 +34,9 @@ class AuthController extends Controller
             redirect('login.php');
         }
 
-        $adminModel->updateLastLogin((int)$user['id']);
+        $penggunaModel->updateLastLogin((int)$user['id']);
         Auth::login($user);
-        $adminModel->logActivity('LOGIN', 'auth', "Pengguna {$user['nama']} berhasil login.", (int)$user['id']);
+        $penggunaModel->logActivity('LOGIN', 'auth', "Pengguna {$user['nama']} berhasil login.", (int)$user['id']);
 
         Flash::set('success', "Selamat datang kembali, {$user['nama']}!");
         redirect('index.php');
@@ -45,7 +45,7 @@ class AuthController extends Controller
     public function logout(Request $request): void
     {
         if (Auth::check()) {
-            (new Admin())->logActivity('LOGOUT', 'auth', 'Pengguna keluar dari sesi.');
+            (new Pengguna())->logActivity('LOGOUT', 'auth', 'Pengguna keluar dari sesi.');
         }
         Auth::logout();
         Flash::set('success', 'Anda telah berhasil logout.');

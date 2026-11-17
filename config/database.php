@@ -341,32 +341,32 @@ function render_layout(string $title, string $activePage, string $content): void
                     <a href="<?= base_url('index.php') ?>" class="nav-item <?= $activePage === 'dashboard' ? 'active' : '' ?>">
                         <span>Dashboard</span>
                     </a>
-                    <a href="<?= base_url('peminjaman.php') ?>" class="nav-item <?= $activePage === 'peminjaman' ? 'active' : '' ?>">
-                        <span>Peminjaman / Sewa</span>
+                    <a href="<?= base_url('penyewaan.php') ?>" class="nav-item <?= $activePage === 'penyewaan' ? 'active' : '' ?>">
+                        <span>Penyewaan</span>
                     </a>
-                    <a href="<?= base_url('detail_peminjaman.php') ?>" class="nav-item <?= $activePage === 'detail_peminjaman' ? 'active' : '' ?>">
-                        <span>Pengembalian & Denda</span>
+                    <a href="<?= base_url('pengembalian.php') ?>" class="nav-item <?= $activePage === 'pengembalian' ? 'active' : '' ?>">
+                        <span>Pengembalian</span>
                     </a>
                 </div>
 
                 <div class="nav-group">
                     <div class="nav-heading">Data Master</div>
-                    <a href="<?= base_url('buku.php') ?>" class="nav-item <?= $activePage === 'buku' ? 'active' : '' ?>">
-                        <span>Kendaraan / Armada</span>
+                    <a href="<?= base_url('kendaraan.php') ?>" class="nav-item <?= $activePage === 'kendaraan' ? 'active' : '' ?>">
+                        <span>Kendaraan</span>
                     </a>
-                    <a href="<?= base_url('kategori.php') ?>" class="nav-item <?= $activePage === 'kategori' ? 'active' : '' ?>">
-                        <span>Kategori / Jenis</span>
+                    <a href="<?= base_url('jenis_kendaraan.php') ?>" class="nav-item <?= $activePage === 'jenis_kendaraan' ? 'active' : '' ?>">
+                        <span>Jenis Kendaraan</span>
                     </a>
-                    <a href="<?= base_url('anggota.php') ?>" class="nav-item <?= $activePage === 'anggota' ? 'active' : '' ?>">
-                        <span>Anggota / Pelanggan</span>
+                    <a href="<?= base_url('pelanggan.php') ?>" class="nav-item <?= $activePage === 'pelanggan' ? 'active' : '' ?>">
+                        <span>Pelanggan</span>
                     </a>
                 </div>
 
                 <?php if ($isAdmin): ?>
                 <div class="nav-group">
                     <div class="nav-heading">Administrasi</div>
-                    <a href="<?= base_url('admin.php') ?>" class="nav-item <?= $activePage === 'admin' ? 'active' : '' ?>">
-                        <span>Manajemen Pengguna</span>
+                    <a href="<?= base_url('pengguna.php') ?>" class="nav-item <?= $activePage === 'pengguna' ? 'active' : '' ?>">
+                        <span>Pengguna</span>
                     </a>
                 </div>
                 <?php endif; ?>
@@ -397,9 +397,9 @@ function render_layout(string $title, string $activePage, string $content): void
                     <div class="topbar-crumb"><span>Sistem Informasi Rental Kendaraan</span></div>
                 </div>
                 <div class="topbar-right">
-                    <a href="<?= base_url('peminjaman.php?action=create') ?>" class="btn btn-primary btn-sm">
+                    <a href="<?= base_url('penyewaan.php?action=create') ?>" class="btn btn-primary btn-sm">
                         <i data-lucide="plus" style="width:14px;height:14px;"></i>
-                        <span>Sewa Baru</span>
+                        <span>Tambah Penyewaan</span>
                     </a>
                     <div class="topbar-user-pill">
                         <span class="topbar-user-avatar"><?= strtoupper(substr($user['nama'] ?? 'U', 0, 1)) ?></span>

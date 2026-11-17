@@ -7,25 +7,25 @@ if (!Auth::check()) {
     redirect('login.php');
 }
 
-$bukuModel = new Buku();
-$peminjamanModel = new Peminjaman();
-$anggotaModel = new Anggota();
-$adminModel = new Admin();
+$kendaraanModel = new Kendaraan();
+$penyewaanModel = new Penyewaan();
+$pelangganModel = new Pelanggan();
+$penggunaModel = new Pengguna();
 
 $stats = [
-    'total_kendaraan'     => $bukuModel->getFleetStats()['total_kendaraan'],
-    'kendaraan_tersedia'  => $bukuModel->getFleetStats()['kendaraan_tersedia'],
-    'kendaraan_disewa'    => $bukuModel->getFleetStats()['kendaraan_disewa'],
-    'kendaraan_perawatan' => $bukuModel->getFleetStats()['kendaraan_perawatan'],
-    'total_pelanggan'     => $anggotaModel->countAll(),
-    'total_pendapatan'    => $peminjamanModel->getSummaryStats()['total_pendapatan'],
-    'sewa_berjalan'       => $peminjamanModel->getSummaryStats()['sewa_berjalan'],
-    'sewa_dipesan'        => $peminjamanModel->getSummaryStats()['sewa_dipesan'],
-    'sewa_selesai'        => $peminjamanModel->getSummaryStats()['sewa_selesai'],
+    'total_kendaraan'     => $kendaraanModel->getFleetStats()['total_kendaraan'],
+    'kendaraan_tersedia'  => $kendaraanModel->getFleetStats()['kendaraan_tersedia'],
+    'kendaraan_disewa'    => $kendaraanModel->getFleetStats()['kendaraan_disewa'],
+    'kendaraan_perawatan' => $kendaraanModel->getFleetStats()['kendaraan_perawatan'],
+    'total_pelanggan'     => $pelangganModel->countAll(),
+    'total_pendapatan'    => $penyewaanModel->getSummaryStats()['total_pendapatan'],
+    'sewa_berjalan'       => $penyewaanModel->getSummaryStats()['sewa_berjalan'],
+    'sewa_dipesan'        => $penyewaanModel->getSummaryStats()['sewa_dipesan'],
+    'sewa_selesai'        => $penyewaanModel->getSummaryStats()['sewa_selesai'],
 ];
 
-$chartData = $peminjamanModel->getDailyRevenueChart(10);
-$transaksiBerjalan = $peminjamanModel->getActiveAndReserved(8);
+$chartData = $penyewaanModel->getDailyRevenueChart(10);
+$transaksiBerjalan = $penyewaanModel->getActiveAndReserved(8);
 $totalFleet = max(1, (int)$stats['total_kendaraan']);
 $pctTersedia = round(((int)$stats['kendaraan_tersedia'] / $totalFleet) * 100);
 $pctDisewa = round(((int)$stats['kendaraan_disewa'] / $totalFleet) * 100);
@@ -36,16 +36,15 @@ ob_start();
 <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
     <div>
         <h1 class="page-title" style="font-size:22px;font-weight:700;color:var(--text-primary);margin:0 0 4px 0;">Ringkasan Operasional</h1>
-        <p class="page-desc" style="font-size:13px;color:var(--text-secondary);margin:0;">Pantau status armada dan transaksi hari ini.</p>
     </div>
     <div class="page-actions" style="display:flex;gap:10px;">
-        <a href="<?= base_url('peminjaman.php?action=laporan') ?>" class="btn btn-outline btn-magnetic">
+        <a href="<?= base_url('penyewaan.php?action=laporan') ?>" class="btn btn-outline btn-magnetic">
             <i data-lucide="bar-chart-2" style="width:15px;height:15px;margin-right:6px;"></i>
             <span>Laporan</span>
         </a>
-        <a href="<?= base_url('peminjaman.php?action=create') ?>" class="btn btn-primary btn-premium-cta">
+        <a href="<?= base_url('penyewaan.php?action=create') ?>" class="btn btn-primary btn-premium-cta">
             <i data-lucide="plus" style="width:15px;height:15px;margin-right:6px;"></i>
-            <span>Sewa Baru</span>
+            <span>Tambah Penyewaan</span>
         </a>
     </div>
 </div>
@@ -55,7 +54,7 @@ ob_start();
     <!-- Total Armada -->
     <div class="kpi-card card tilt-card spotlight-card" style="padding:20px;">
         <div class="kpi-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-            <span class="kpi-label" style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;">Total Armada</span>
+            <span class="kpi-label" style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;">Total Kendaraan</span>
             <span class="kpi-icon" style="color:var(--text-secondary);"><i data-lucide="car-front" style="width:16px;height:16px;"></i></span>
         </div>
         <div>
@@ -131,7 +130,6 @@ ob_start();
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
             <div>
                 <h2 class="card-title" style="font-size:15px;font-weight:700;color:var(--text-primary);margin:0 0 2px 0;">Grafik Pendapatan Sewa</h2>
-                <p class="card-desc" style="font-size:12.5px;color:var(--text-secondary);margin:0;">Pendapatan harian berdasarkan tanggal mulai sewa.</p>
             </div>
             <span style="font-size:11.5px;font-weight:600;color:var(--text-secondary);background:var(--bg-warm);padding:4px 10px;border-radius:12px;border:1px solid var(--border);">10 Transaksi Terakhir</span>
         </div>
@@ -144,7 +142,7 @@ ob_start();
     <div class="card" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between;">
         <div>
             <h2 class="card-title" style="font-size:15px;font-weight:700;color:var(--text-primary);margin:0 0 2px 0;">Ketersediaan Unit</h2>
-            <p class="card-desc" style="font-size:12.5px;color:var(--text-secondary);margin:0 0 16px 0;">Status kendaraan hari ini.</p>
+            <p class="card-desc" style="font-size:12.5px;color:var(--text-secondary);margin:0 0 16px 0;"></p>
 
             <div style="display:flex;flex-direction:column;gap:10px;">
                 <!-- Tersedia -->
@@ -194,8 +192,8 @@ ob_start();
             </div>
         </div>
 
-        <a href="<?= base_url('buku.php') ?>" class="btn btn-outline btn-magnetic" style="width:100%;margin-top:16px;justify-content:center;">
-            <span>Lihat Semua Armada</span>
+        <a href="<?= base_url('kendaraan.php') ?>" class="btn btn-outline btn-magnetic" style="width:100%;margin-top:16px;justify-content:center;">
+            <span>Lihat Semua Kendaraan</span>
             <i data-lucide="arrow-right" style="width:14px;height:14px;margin-left:6px;"></i>
         </a>
     </div>
@@ -208,7 +206,7 @@ ob_start();
             <h2 style="font-size:15px;font-weight:700;color:var(--text-primary);margin:0 0 2px 0;">Sewa Aktif & Booking</h2>
             <p style="font-size:12.5px;color:var(--text-secondary);margin:0;">Unit yang sedang dipakai atau menunggu diambil.</p>
         </div>
-        <a href="<?= base_url('peminjaman.php') ?>" class="btn btn-outline btn-sm btn-magnetic">
+        <a href="<?= base_url('penyewaan.php') ?>" class="btn btn-outline btn-sm btn-magnetic">
             <span>Semua Transaksi</span>
             <i data-lucide="arrow-right" style="width:13px;height:13px;margin-left:4px;"></i>
         </a>
@@ -219,7 +217,7 @@ ob_start();
                 <tr style="background:var(--bg-warm);text-align:left;border-bottom:1px solid var(--border);">
                     <th style="padding:12px 18px;font-size:12px;font-weight:700;color:var(--text-secondary);">KODE</th>
                     <th style="padding:12px 18px;font-size:12px;font-weight:700;color:var(--text-secondary);">PENYEWA</th>
-                    <th style="padding:12px 18px;font-size:12px;font-weight:700;color:var(--text-secondary);">ARMADA</th>
+                    <th style="padding:12px 18px;font-size:12px;font-weight:700;color:var(--text-secondary);">KENDARAAN</th>
                     <th style="padding:12px 18px;font-size:12px;font-weight:700;color:var(--text-secondary);">BATAS KEMBALI</th>
                     <th style="padding:12px 18px;font-size:12px;font-weight:700;color:var(--text-secondary);">STATUS</th>
                     <th style="padding:12px 18px;font-size:12px;font-weight:700;color:var(--text-secondary);text-align:right;">AKSI</th>
@@ -232,7 +230,7 @@ ob_start();
                     <?php foreach ($transaksiBerjalan as $tb): ?>
                     <tr style="border-bottom:1px solid var(--border);">
                         <td style="padding:12px 18px;font-family:monospace;font-weight:700;">
-                            <a href="<?= base_url('peminjaman.php?action=show&id=' . $tb['id']) ?>" style="color:var(--accent);text-decoration:none;">
+                            <a href="<?= base_url('penyewaan.php?action=show&id=' . $tb['id']) ?>" style="color:var(--accent);text-decoration:none;">
                                 <?= e($tb['kode_transaksi']) ?>
                             </a>
                         </td>
@@ -245,7 +243,7 @@ ob_start();
                             </span>
                         </td>
                         <td style="padding:12px 18px;text-align:right;">
-                            <a href="<?= base_url('peminjaman.php?action=show&id=' . $tb['id']) ?>" class="btn btn-outline btn-sm btn-magnetic">Detail</a>
+                            <a href="<?= base_url('penyewaan.php?action=show&id=' . $tb['id']) ?>" class="btn btn-outline btn-sm btn-magnetic">Detail</a>
                         </td>
                     </tr>
                     <?php endforeach; ?>
