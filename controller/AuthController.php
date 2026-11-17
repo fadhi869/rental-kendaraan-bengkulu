@@ -1,23 +1,18 @@
 <?php
-namespace App\Controllers;
+declare(strict_types=1);
 
-use App\Models\User;
-use App\Services\ActivityLogger;
-use Auth;
-use Controller;
-use Flash;
-use Request;
-
+/**
+ * Controller Autentikasi Pengguna (Login & Logout)
+ */
 class AuthController extends Controller
 {
     public function loginForm(?Request $request = null): void
     {
         if (Auth::check()) {
-            redirect('/dashboard');
+            redirect('index.php');
         }
-        $this->view('auth/login', [
-            'title' => 'Masuk — Rental Armada Bengkulu',
-        ], 'layouts/auth');
+        $flash = Flash::get();
+        require BASE_PATH . '/login.php';
     }
 
     public function login(Request $request): void
@@ -26,35 +21,34 @@ class AuthController extends Controller
         $username = trim((string)$request->input('username'));
         $password = (string)$request->input('password');
 
-        $userModel = new User();
-        $user = $userModel->findByUsername($username);
+        $adminModel = new Admin();
+        $user = $adminModel->findByUsername($username);
 
         if (!$user || !password_verify($password, $user['password'])) {
-            Flash::set('error', 'Username atau password salah.');
-            redirect('/login');
+            Flash::set('error', 'Username atau password yang dimasukkan salah.');
+            redirect('login.php');
         }
 
         if (($user['status'] ?? 'active') !== 'active') {
-            Flash::set('error', 'Akun dinonaktifkan. Hubungi admin.');
-            redirect('/login');
+            Flash::set('error', 'Akun Anda dinonaktifkan. Silakan hubungi Administrator.');
+            redirect('login.php');
         }
 
-        $userModel->updateLastLogin((int)$user['id']);
+        $adminModel->updateLastLogin((int)$user['id']);
         Auth::login($user);
-        ActivityLogger::log('LOGIN', 'auth', "Pengguna {$user['nama']} masuk ke sistem.", (int)$user['id']);
+        $adminModel->logActivity('LOGIN', 'auth', "Pengguna {$user['nama']} berhasil login.", (int)$user['id']);
 
-        Flash::set('success', "Selamat datang, {$user['nama']}!");
-        redirect('/dashboard');
+        Flash::set('success', "Selamat datang kembali, {$user['nama']}!");
+        redirect('index.php');
     }
 
     public function logout(Request $request): void
     {
-        $this->verifyCsrf($request);
         if (Auth::check()) {
-            ActivityLogger::log('LOGOUT', 'auth', 'Pengguna keluar dari sistem.');
+            (new Admin())->logActivity('LOGOUT', 'auth', 'Pengguna keluar dari sesi.');
         }
         Auth::logout();
-        Flash::set('success', 'Anda telah keluar.');
-        redirect('/login');
+        Flash::set('success', 'Anda telah berhasil logout.');
+        redirect('login.php');
     }
 }

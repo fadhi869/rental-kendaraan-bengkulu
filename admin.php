@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/config/database.php';
 
-$controller = new UserController();
+$controller = new AdminController();
 $request = new Request();
 $action = (string)$request->input('action', '');
 $id = (string)$request->input('id', '');
@@ -19,11 +19,5 @@ if ($request->method() === 'POST') {
         $controller->store($request);
     }
 } else {
-    if ($action === 'create') {
-        $controller->create($request);
-    } elseif ($action === 'edit' && $id !== '') {
-        $controller->edit($request, $id);
-    } else {
-        $controller->index($request);
-    }
+    $controller->index($request);
 }

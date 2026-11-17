@@ -1,11 +1,26 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # Deliver existing files and directories directly
+    # Real files & directories
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^ - [L]
 
-    # Route all other requests through index.php
-    RewriteRule ^ index.php [QSA,L]
+    # Clean URL rewrites to matching root files
+    RewriteRule ^dashboard/?$ index.php [L,QSA]
+    RewriteRule ^login/?$ login.php [L,QSA]
+    RewriteRule ^logout/?$ logout.php [L,QSA]
+    RewriteRule ^kendaraan/?$ buku.php [L,QSA]
+    RewriteRule ^pelanggan/?$ anggota.php [L,QSA]
+    RewriteRule ^jenis-kendaraan/?$ kategori.php [L,QSA]
+    RewriteRule ^penyewaan/?$ peminjaman.php [L,QSA]
+    RewriteRule ^pengembalian/?$ detail_peminjaman.php [L,QSA]
+    RewriteRule ^laporan/?$ peminjaman.php?action=laporan [L,QSA]
+    RewriteRule ^riwayat/?$ peminjaman.php [L,QSA]
+    RewriteRule ^admin/users/?$ admin.php [L,QSA]
+    RewriteRule ^admin/?$ admin.php [L,QSA]
+    RewriteRule ^aktivitas/?$ admin.php [L,QSA]
+
+    # Fallback to index.php
+    RewriteRule ^ index.php [L,QSA]
 </IfModule>
