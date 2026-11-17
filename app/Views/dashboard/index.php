@@ -7,7 +7,6 @@ $pctPerawatan = round(((int)$stats['kendaraan_perawatan'] / $totalFleet) * 100);
 <div class="page-header">
     <div>
         <h1 class="page-title">Ringkasan Operasional</h1>
-        <p class="page-desc">Pantau status armada dan transaksi hari ini.</p>
     </div>
     <div class="page-actions">
         <a href="<?= base_url('laporan') ?>" class="btn btn-outline btn-magnetic">
@@ -16,7 +15,7 @@ $pctPerawatan = round(((int)$stats['kendaraan_perawatan'] / $totalFleet) * 100);
         </a>
         <a href="<?= base_url('penyewaan/create') ?>" class="btn btn-primary btn-premium-cta">
             <i data-lucide="plus" style="width:15px;height:15px;"></i>
-            <span>Sewa Baru</span>
+            <span>Tambah Penyewaan</span>
         </a>
     </div>
 </div>
@@ -25,7 +24,7 @@ $pctPerawatan = round(((int)$stats['kendaraan_perawatan'] / $totalFleet) * 100);
 <div class="grid-kpi" style="margin-bottom:20px;">
     <div class="kpi-card tilt-card spotlight-card">
         <div class="kpi-header">
-            <span class="kpi-label">Total Armada</span>
+            <span class="kpi-label">Total Kendaraan</span>
             <span class="kpi-icon">
                 <i data-lucide="car-front" style="width:16px;height:16px;"></i>
             </span>
@@ -97,7 +96,6 @@ $pctPerawatan = round(((int)$stats['kendaraan_perawatan'] / $totalFleet) * 100);
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
             <div>
                 <h2 class="card-title">Grafik Pendapatan Sewa</h2>
-                <p class="card-desc">Pendapatan harian berdasarkan tanggal mulai sewa.</p>
             </div>
             <span style="font-size:11.5px;font-weight:600;color:var(--text-secondary);background:var(--bg-warm);padding:4px 10px;border-radius:var(--radius-sm);border:1px solid var(--border);">
                 10 Transaksi Terakhir
@@ -111,7 +109,7 @@ $pctPerawatan = round(((int)$stats['kendaraan_perawatan'] / $totalFleet) * 100);
     <div class="card col-4" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between;">
         <div>
             <h2 class="card-title">Ketersediaan Unit</h2>
-            <p class="card-desc" style="margin-bottom:16px;">Status kendaraan hari ini.</p>
+            <p class="card-desc" style="margin-bottom:16px;"></p>
 
             <div style="display:flex;flex-direction:column;gap:10px;">
                 <!-- Tersedia -->

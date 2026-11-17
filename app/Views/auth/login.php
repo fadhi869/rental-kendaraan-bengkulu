@@ -13,9 +13,8 @@ $hasError = ($flash && $flash['type'] === 'error');
             <div class="auth-brand-badge" id="brandBadge" title="Armada Bengkulu">
                 <i data-lucide="car" class="brand-car-icon" style="width:22px;height:22px;"></i>
             </div>
-            <div class="auth-brand-name">Armada Bengkulu</div>
-            <h1 class="auth-title">Masuk ke Dashboard</h1>
-            <p class="auth-subtitle">Kelola operasional rental dalam satu tempat.</p>
+            <div class="auth-brand-name">MANAJEMEN RENTAL KENDARAAN</div>
+            <h1 class="auth-title">Halaman Login</h1>
         </div>
 
         <?php if ($flash): ?>
@@ -100,7 +99,7 @@ $hasError = ($flash && $flash['type'] === 'error');
         </form>
 
         <div class="auth-footer-simple" id="authFooter">
-            <span>&copy; <?= date('Y') ?> Armada Bengkulu &bull; Sistem Rental</span>
+            <span>Kelompok 1 &bull; Tugas Besar Praktikum PBO</span>
         </div>
     </div>
 </div>

@@ -10,7 +10,7 @@
     <div class="topbar-right">
         <a href="<?= base_url('penyewaan/create') ?>" class="btn btn-primary btn-premium-cta btn-sm">
             <i data-lucide="plus" style="width:14px;height:14px;"></i>
-            <span>Sewa Baru</span>
+            <span>Tambah Penyewaan</span>
         </a>
         <div class="topbar-user-pill">
             <span class="topbar-user-avatar">

@@ -19,8 +19,7 @@ $isActive = function(string $route) use ($uri): string {
                 <i data-lucide="car" style="width:18px;height:18px;"></i>
             </div>
             <div>
-                <div class="brand-title">Armada Bengkulu</div>
-                <div class="brand-subtitle">Rental Kendaraan</div>
+                <div class="brand-title">Manajemen Rental Kendaraan</div>
             </div>
         </a>
 
